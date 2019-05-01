@@ -1,0 +1,5 @@
+{
+	"tiles":{"sx":0,"sy":0,"tileW":34,"tileH":34,"frames":49},
+	"barTop":{"sx":102,"sy":170,"tileW":34,"tileH":34,"frames":49},
+	"bar":{"sx":102,"sy":204,"tileW":34,"tileH":34,"frames":49}
+}
