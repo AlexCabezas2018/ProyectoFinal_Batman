@@ -1,14 +1,14 @@
 {
-    "BatmanStaticLeft": {},
-    "BatmanStaticRigth": {},
-    "BatmanRunning": { "sx":0,"sy":0,"tileW":32,"tileH":32,"frames":2 } , 
-    "BatmanJump": {},
-    "crouch": { }, 
-    "BatmanDie": {},
-    "BatmanHittedCrouched": {},
-    "BatmanHittedRunning": {},
-    "BatmanPunchCrouched": {}, 
-    "BatmanPunchJumping": {},
-    "BatmanPunch": {},
-    "BatmanBounce": {}
+    "batmanStaticLeft": {},
+    "batmanStaticRigth": {},
+    "batmanRunning": { "sx":1, "sy":40,"tilew":28 ,"tileh":33, "frames": 6 } , 
+    "batmanJump": {},
+    "crouch": {}, 
+    "batmanDie": {},
+    "batmanHittedCrouched": {},
+    "batmanHittedRunning": {},
+    "batmanPunchCrouched": {}, 
+    "batmanPunchJumping": {},
+    "batmanPunch": {},
+    "batmanBounce": {}
 }
