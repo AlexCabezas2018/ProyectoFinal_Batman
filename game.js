@@ -3,7 +3,7 @@
 window.addEventListener("load",function() {
     var Q = window.Q = Quintus() 
             .include("Sprites, Scenes, Input, Touch, UI, TMX, Anim, 2D")
-            .setup({ width: 480, height: 372}) 
+            .setup({ width: 544, height: 544}) 
             .controls().touch()
 
     Q.PLAYER = 1;
@@ -312,7 +312,7 @@ window.addEventListener("load",function() {
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
       background.on("click",function() {
         Q.clearStages();
-        Q.stageScene('level1');
+        Q.stageScene('level2');
         Q.stageScene('hud', 3, Q('Player').first().p);
       });
 
@@ -325,7 +325,7 @@ window.addEventListener("load",function() {
     });
 
 
-    Q.loadTMX("level.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, tiles.json, tiles.png, coin.json, coin.png", function() {
+    Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, tiles.json, tiles.png, coin.json, coin.png", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
         Q.compileSheets("bloopa.png","bloopa.json");
@@ -385,6 +385,15 @@ window.addEventListener("load",function() {
   
      // stage.insert(new Q.Princess({ x: 80, y: 500 }));
     //stage.centerOn(150, 380);
+    });
+
+     Q.scene("level2",function(stage) {
+      Q.stageTMX("level2.tmx",stage);
+      Mario = stage.insert(new Q.Player({x:30,y:30}));
+      stage.add("viewport");
+      stage.viewport.offsetX = -Q.width*30/100;
+      stage.viewport.offsetY = Q.height*33/100;
+     
     });
 
     Q.scene('endGame',function(stage) {
