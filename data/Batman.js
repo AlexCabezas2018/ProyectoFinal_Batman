@@ -44,12 +44,13 @@ var game = function() {
             this._super(p, {
                 /*Coordendas, propiedades básicas*/
                 sprite: "batman_anims",
-                sheet: "batmanStaticRight",
+                sheet: "batmanRunning",
                 x: 0,
-                y: 0, 
+                y: 0,
+                scale: 2 //Aquí se ajusta el tamaño.
 
             });
-            this.add( /*2d*/ 'platformerControls, animation');
+            this.add( /*'2d*/ 'platformerControls, animation');
             this.play('static_right');
             //Implementar las colisiones y los disparos.
             
@@ -72,6 +73,5 @@ var game = function() {
     //Para testing
     Q.scene("level1", function(stage) {
         var x = stage.insert(new Q.Batman({ x: 100, y: 100 }));
-        console.log(x);
     })
 }
