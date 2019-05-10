@@ -343,23 +343,37 @@ window.addEventListener("load",function() {
         }
       },
     });
-    /*************Objetos Stage 2*************/
-
+     /*****************************************************************Objetos Stage 2*************************************************************************************/
+     Q.animations("cintainferior",{
+      cintainferior: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+     });
     Q.Sprite.extend("cintainferior",{
       init: function(p) {
-        this._super(p, { sheet: 'cintainferior'});
+        this._super(p, { sheet: "cintainferior",sprite:"cintainferior"});
+        this.add("animation");
+        this.play("cintainferior");
       },
       step: function(dt) {} });
 
+     Q.animations("cintaSup",{
+      cintaSup: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+     });
     Q.Sprite.extend("cintaSup",{
       init: function(p) {
-        this._super(p, { sheet: 'cintaSup'});
+        this._super(p, { sheet: "cintaSup",sprite:"cintaSup"});
+        this.add("animation");
+        this.play("cintaSup");
       },
       step: function(dt) {} });
     
+    Q.animations("barraElect",{
+      barraElect: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+     });
     Q.Sprite.extend("barraElect",{
       init: function(p) {
-        this._super(p, { sheet: 'barraElect'});
+        this._super(p, { sheet: 'barraElect',sprite:"barraElect"});
+        this.add("animation");
+        this.play("barraElect");
       },
       step: function(dt) {} });
     
@@ -401,7 +415,7 @@ window.addEventListener("load",function() {
       step: function(dt) {} });
 
 
-    /*****************************************/
+    /*******************************************************************************************************************************************************************/
 
 
     /*Collision floor*/
@@ -498,8 +512,8 @@ window.addEventListener("load",function() {
 
 
    Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
-    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,ia.png,ia2.png,barraElect.png," +  
-    "cintainferior.png, princess.png, mainTitle.png, tiles.json, tiles.png," +  
+    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,cintaSup.json,ia.png,ia2.png,barraElect.png,barraElect.json," +  
+    "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
@@ -507,6 +521,9 @@ window.addEventListener("load",function() {
         Q.compileSheets("tiles.png","tiles.json");
         Q.compileSheets("batman.png", "batman.json")
         Q.compileSheets("coin.png","coin.json");
+         Q.compileSheets("cintainferior.png","cintainferior.json");
+        Q.compileSheets("cintaSup.png","cintaSup.json");
+        Q.compileSheets("barraElect.png","barraElect.json");
 
         /* no animations
         Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
