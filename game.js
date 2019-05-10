@@ -52,22 +52,24 @@ window.addEventListener("load",function() {
               scale: 2, //Aquí se ajusta el tamaño.
               staticAnim: true,
               gravity: 1,
+              type: Q.PLAYER,
               isJumping: false,
               isCrouching: false,
               prevDir: "right"
           });
-          this.add( '2d, platformerControls, animation');
+          this.add('2d, platformerControls, animation');
           //Implementar las colisiones y los disparos.
       } ,
 
       step: function(dt) {
           /* Movimientos en aire */ 
-          if(Q.inputs["up"] && !this.p.isCrouching){
-            this.p.gravity = 0.5;
+          if(Q.inputs["up"] && !this.p.isCrouching && !this.p.isJumping){
+            this.p.gravity = 0.2;
             this.p.staticAnim = true;
             this.p.isJumping = true;
           }
-          else {
+
+          if(!Q.inputs["up"]) {
             this.p.gravity = 1;
             this.p.isJumping = false;
           }
@@ -119,15 +121,6 @@ window.addEventListener("load",function() {
 
 
   /******************************************************************************/
-
-
-
-
-
-
-
-
-
 
     /* Mario */
     Q.Sprite.extend("Player",{
