@@ -231,6 +231,66 @@ window.addEventListener("load",function() {
         }
       },
     });
+    /*************Objetos Stage 2*************/
+
+    Q.Sprite.extend("cintainferior",{
+      init: function(p) {
+        this._super(p, { sheet: 'cintainferior'});
+      },
+      step: function(dt) {} });
+
+    Q.Sprite.extend("cintaSup",{
+      init: function(p) {
+        this._super(p, { sheet: 'cintaSup'});
+      },
+      step: function(dt) {} });
+    
+    Q.Sprite.extend("barraElect",{
+      init: function(p) {
+        this._super(p, { sheet: 'barraElect'});
+      },
+      step: function(dt) {} });
+    
+  Q.Sprite.extend("ia",{
+      init: function(p) {
+        this._super(p, { sheet: 'ia'});
+      },
+      step: function(dt) {} });
+
+    Q.Sprite.extend("ia2",{
+      init: function(p) {
+        this._super(p, { sheet: 'ia2'});
+      },
+      step: function(dt) {} });
+    
+    Q.Sprite.extend("cuchillas",{
+      init: function(p) {
+        this._super(p, { sheet: 'cuchillas'});
+      },
+      step: function(dt) {} });
+
+    Q.Sprite.extend("cuchillas2",{
+      init: function(p) {
+        this._super(p, { sheet: 'cuchillas2'});
+      },
+      step: function(dt) {} });
+
+    Q.Sprite.extend("cuchillas3",{
+      init: function(p) {
+        this._super(p, { sheet: 'cuchillas3'});
+      },
+      step: function(dt) {} });
+
+    Q.Sprite.extend("acc1",{
+      init: function(p) {
+        this._super(p, { sheet: 'acc1'});
+      },
+
+      step: function(dt) {} });
+
+
+    /*****************************************/
+
 
     /*Collision floor*/
     Q.Sprite.extend("Tile", {
@@ -309,8 +369,8 @@ window.addEventListener("load",function() {
         Q.stageScene('hud', 3, Q('Player').first().p);
       });
 
-      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
-      background.on("click",function() {
+      var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
+      button2.on("click",function() {
         Q.clearStages();
         Q.stageScene('level2');
         Q.stageScene('hud', 3, Q('Player').first().p);
@@ -325,7 +385,7 @@ window.addEventListener("load",function() {
     });
 
 
-    Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, tiles.json, tiles.png, coin.json, coin.png", function() {
+   Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png, bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,ia.png,ia2.png,barraElect.png, cintainferior.png, princess.png, mainTitle.png, tiles.json, tiles.png, coin.json, coin.png", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
         Q.compileSheets("bloopa.png","bloopa.json");

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="38" height="18" tilewidth="34" tileheight="34" infinite="0" nextlayerid="26" nextobjectid="424">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="38" height="18" tilewidth="34" tileheight="34" infinite="0" nextlayerid="27" nextobjectid="487">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
   <image source="../images/tiles.png" width="238" height="238"/>
   <tile id="0">
@@ -475,6 +475,150 @@
  </tileset>
  <tileset firstgid="66" name="tilesImach" tilewidth="34" tileheight="34" tilecount="256" columns="16">
   <image source="../images/tilesImach.png" width="544" height="544"/>
+ </tileset>
+ <tileset firstgid="322" name="cintainferior" tilewidth="238" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/cintainferior.png" width="952" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="cintainferior"/>
+    <property name="sheet" value="cintainferior"/>
+    <property name="sprite" value="cintainferior"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="326" name="cintaSup" tilewidth="170" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/cintaSup.png" width="680" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="cintaSup"/>
+    <property name="sheet" value="cintaSup"/>
+    <property name="sprite" value="cintaSup"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="90"/>
+    <frame tileid="1" duration="90"/>
+    <frame tileid="2" duration="90"/>
+    <frame tileid="3" duration="90"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="330" name="barraElect" tilewidth="34" tileheight="136" tilecount="4" columns="4">
+  <image source="../images/barraElect.png" width="136" height="136"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="barraElect"/>
+    <property name="sheet" value="barraElect"/>
+    <property name="sprite" value="barraElect"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="334" name="ia" tilewidth="34" tileheight="17" tilecount="4" columns="4">
+  <image source="../images/ia.png" width="136" height="17"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="ia"/>
+    <property name="sheet" value="ia"/>
+    <property name="sprite" value="ia"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="338" name="ia2" tilewidth="34" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/ia2.png" width="136" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="ia2"/>
+    <property name="sheet" value="ia2"/>
+    <property name="sprite" value="ia2"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="342" name="cuchillas" tilewidth="34" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/cuchillas.png" width="136" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="cuchillas"/>
+    <property name="sheet" value="cuchillas"/>
+    <property name="sprite" value="cuchillas"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="346" name="cuchillas2" tilewidth="34" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/cuchillas2.png" width="136" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="cuchillas2"/>
+    <property name="sheet" value="cuchillas2"/>
+    <property name="sprite" value="cuchillas2"/>
+   </properties>
+   <animation>
+    <frame tileid="3" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="0" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="350" name="cuchillas3" tilewidth="34" tileheight="34" tilecount="4" columns="4">
+  <image source="../images/cuchillas3.png" width="136" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="cuchillas3"/>
+    <property name="sheet" value="cuchillas3"/>
+    <property name="sprite" value="cuchillas3"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="354" name="acc1" tilewidth="40" tileheight="45" tilecount="4" columns="4">
+  <image source="../images/acc1.png" width="160" height="45"/>
+  <tile id="0">
+    <properties>
+    <property name="Class" value="acc1"/>
+    <property name="sheet" value="acc1"/>
+    <property name="sprite" value="acc1"/>
+   </properties>
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="3" duration="100"/>
+   </animation>
+  </tile>
  </tileset>
  <imagelayer id="21" name="background">
   <image source="../images/background2.png" width="544" height="544"/>
@@ -1884,5 +2028,19 @@
     <property name="vx" value="30"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="26" name="cinitaInferior">
+  <object id="425" gid="322" x="136" y="476" width="238" height="34"/>
+  <object id="426" gid="326" x="136" y="306" width="170" height="34"/>
+  <object id="428" gid="330" x="410" y="273" width="34" height="136"/>
+  <object id="432" gid="334" x="453" y="392" width="34" height="17"/>
+  <object id="434" gid="334" x="46" y="169" width="34" height="17"/>
+  <object id="440" gid="338" x="468" y="409" width="34" height="34"/>
+  <object id="467" gid="342" x="76" y="510" width="34" height="34"/>
+  <object id="468" gid="342" x="76" y="543" width="34" height="34"/>
+  <object id="470" gid="346" x="111" y="510" width="34" height="34"/>
+  <object id="472" gid="346" x="111" y="543" width="34" height="34"/>
+  <object id="476" gid="350" x="68" y="476" width="34" height="34"/>
+  <object id="485" gid="354" x="82" y="213" width="40" height="45"/>
  </objectgroup>
 </map>
