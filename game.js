@@ -53,7 +53,8 @@ window.addEventListener("load",function() {
               staticAnim: true,
               gravity: 1,
               isJumping: false,
-              isCrouching: false
+              isCrouching: false,
+              prevDir: "right"
           });
           this.add( '2d, platformerControls, animation');
           //Implementar las colisiones y los disparos.
@@ -78,13 +79,18 @@ window.addEventListener("load",function() {
             this.play("crouch_" + this.p.direction);
             this.p.staticAnim = true;
             this.p.isCrouching = true;
-            if(this.has('platformerControls')) //Desactivamos el componente para que no pueda moverse mientras está agachado
+            if(this.has('platformerControls')){ //Desactivamos el componente para que no pueda moverse mientras está agachado
               this.del('platformerControls');
+              this.p.vx = 0;
+              this.p.prevDir = this.p.direction;
+            }
           }
           else {
             this.p.isCrouching = false;
-            if(!this.has('platformerControls')) //Para que se mueva
+            if(!this.has('platformerControls')) { //Para que se mueva
               this.add('platformerControls');
+              this.p.direction = this.p.prevDir;
+            }          
           }
 
           /* Movimientos básicos (correr) */
