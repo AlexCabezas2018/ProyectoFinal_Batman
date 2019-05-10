@@ -1,18 +1,4 @@
-var game = function() {
-
-    /*Canvas para debug, el canvas estará en otra clase*/
-    var Q = Quintus().include("Scenes, Sprites, Input, UI, Touch, TMX, 2D, Anim")
-        .setup({ maximize: true })
-        .controls()
-        .touch();
-
-    Q.load(["batman.png", "batman.json"], function() {
-        Q.compileSheets("batman.png", "batman.json");
-        Q.stageScene("level1");
-        //Compilar los json con los sprites
-    });
-
-    /* Animaciones Batman */
+     /* Animaciones Batman */
     Q.animations('batman_anims', {
         static_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
         static_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
@@ -50,7 +36,7 @@ var game = function() {
                 scale: 2 //Aquí se ajusta el tamaño.
 
             });
-            this.add( /*'2d*/ 'platformerControls, animation');
+            this.add( '2d, platformerControls, animation');
             this.play('static_right');
             //Implementar las colisiones y los disparos.
             
@@ -68,10 +54,3 @@ var game = function() {
         }
 
     });
-
-
-    //Para testing
-    Q.scene("level1", function(stage) {
-        var x = stage.insert(new Q.Batman({ x: 100, y: 100 }));
-    })
-}

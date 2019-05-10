@@ -10,6 +10,89 @@ window.addEventListener("load",function() {
     Q.COIN = 2;
     Q.ENEMY = 4;
 
+
+
+
+    /*************************** BATMAN SPRITE ***************************************/
+    Q.animations('batman_anims', {
+      static_left: { frames: [3, 2, 1], rate: 1/8, flip: "x", loop: false },
+      static_right: { frames: [3, 2, 1], rate: 1/8, flip: false, loop: false },
+      static_no_anim_right: { frames: [0], flip: "x", loop: false},
+      static_no_anim_left: { frames: [0], flip: "x", loop: false },
+      running_left: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: "x" } ,
+      running_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: false },
+
+      jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
+      jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
+      crouch_left: { frames: [0], rate: 1/15, flip: "x" },
+      crouch_right: { frames: [0], rate: 1/15, flip: false },
+      die: { frames: [0, 1, 2, 3, 4, 5], rate: 1/15 },
+      hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false },
+      hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x" },
+      hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
+      hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
+      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
+      punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
+      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
+      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
+      punch_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
+      punch_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
+      bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
+      bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
+
+      //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
+  });
+
+  Q.Sprite.extend("Batman", {
+      init: function(p) {
+          this._super(p, {
+              /*Coordendas, propiedades básicas*/
+              sprite: "batman_anims",
+              sheet: "batmanStatic",
+              x: 0,
+              y: 0,
+              scale: 2, //Aquí se ajusta el tamaño.
+              staticAnim: true
+
+          });
+          this.add( '2d, platformerControls, animation');
+          //Implementar las colisiones y los disparos.
+      } ,
+
+      step: function(dt) {
+          if(this.p.vx == 0  && this.p.staticAnim) {
+            this.p.sheet = "batmanStatic";
+            this.play("static_" + this.p.direction);
+            this.p.staticAnim = false;
+          }
+          else if(this.p.vx > 0) {
+              this.p.sheet = "batmanRunning"
+              this.play('running_right');
+              this.p.anim = true;
+              this.p.staticAnim = true;
+          }
+          else if(this.p.vx < 0) {
+              this.p.sheet = "batmanRunning"
+              this.play('running_left');
+              this.p.staticAnim = true;
+          }
+      },
+
+  });
+
+
+
+  /******************************************************************************/
+
+
+
+
+
+
+
+
+
+
     /* Mario */
     Q.Sprite.extend("Player",{
         init: function(p){
@@ -366,30 +449,34 @@ window.addEventListener("load",function() {
       background.on("click",function() {
         Q.clearStages();
         Q.stageScene('level1');
-        Q.stageScene('hud', 3, Q('Player').first().p);
+        Q.stageScene('hud', 3, Q('Batman').first().p);
       });
 
       var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
       button2.on("click",function() {
         Q.clearStages();
         Q.stageScene('level2');
-        Q.stageScene('hud', 3, Q('Player').first().p);
+        Q.stageScene('hud', 3, Q('Batman').first().p);
       });
 
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
       background.on("click",function() {
         Q.clearStages();
         Q.stageScene('level1');
-        Q.stageScene('hud', 3, Q('Player').first().p);
+        Q.stageScene('hud', 3, Q('Batman').first().p);
       });
     });
 
 
-   Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png, bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,ia.png,ia2.png,barraElect.png, cintainferior.png, princess.png, mainTitle.png, tiles.json, tiles.png, coin.json, coin.png", function() {
+   Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
+    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,ia.png,ia2.png,barraElect.png," +  
+    "cintainferior.png, princess.png, mainTitle.png, tiles.json, tiles.png," +  
+    "coin.json, coin.png, batman.png, batman.json", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
         Q.compileSheets("bloopa.png","bloopa.json");
         Q.compileSheets("tiles.png","tiles.json");
+        Q.compileSheets("batman.png", "batman.json")
         Q.compileSheets("coin.png","coin.json");
 
         /* no animations
@@ -424,16 +511,13 @@ window.addEventListener("load",function() {
           jump: { frames: [0,1], rate: 1/2, loop: true },
           dead: { frames: [2], rate: 1/8 }
         });
-
-
+        
         Q.stageScene("mainMenu");
-
-
     });
 
     Q.scene("level1",function(stage) {
       Q.stageTMX("level.tmx",stage);
-      Mario = stage.insert(new Q.Player());
+      Mario = stage.insert(new Q.Batman({x: 30,y: 30}));
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
@@ -449,7 +533,7 @@ window.addEventListener("load",function() {
 
      Q.scene("level2",function(stage) {
       Q.stageTMX("level2.tmx",stage);
-      Mario = stage.insert(new Q.Player({x:30,y:30}));
+      Mario = stage.insert(new Q.Batman({x: 30,y: 30}));
       stage.add("viewport");
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
@@ -471,6 +555,4 @@ window.addEventListener("load",function() {
       });
       box.fit(20);
     });
-
-
 });

@@ -1,9 +1,8 @@
 {
-    "batmanStaticLeft": {},
-    "batmanStaticRigth": {},
+    "batmanStatic": { "sx":0, "sy":4,"tilew":30 ,"tileh":32, "frames": 4 },
     "batmanRunning": { "sx":1, "sy":40,"tilew":28 ,"tileh":33, "frames": 6 } , 
     "batmanJump": {},
-    "crouch": {}, 
+    "crouch": { "sx":119, "sy":14,"tilew":26 ,"tileh":22, "frames": 1 }, 
     "batmanDie": {},
     "batmanHittedCrouched": {},
     "batmanHittedRunning": {},
