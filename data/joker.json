@@ -1,0 +1,8 @@
+{	
+	"Joker":{"sx":0,"sy":0,"tileW":99,"tileH":109,"frames":7},
+	"JokerRunning":{"sx":0,"sy":135,"tileW":100,"tileH":75,"frames":7},
+	"JokerDie":{"sx":143,"sy":235,"tileW":86,"tileH":75,"frames":6},
+	"JokerRayos":{"sx":493,"sy":313,"tileW":76,"tileH":158,"frames":3},
+	"JokerBoomerang":{"sx":257,"sy":429,"tileW":43,"tileH":49,"frames":5},
+	"JokerBalas":{"sx":100,"sy":419,"tileW":36,"tileH":60,"frames":4}
+}
