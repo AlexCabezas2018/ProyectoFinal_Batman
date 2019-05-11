@@ -3,7 +3,7 @@
 window.addEventListener("load",function() {
   var Q = window.Q = Quintus({ development: true, audioSupported: ["mp3", "ogg"] }) 
           .include("Sprites, Scenes, Input, Touch, UI, TMX, Anim, Audio, 2D")
-          .setup({ width: 480, height: 372}) 
+          .setup({ width: 544, height: 544}) 
           .controls().touch()
           Q.enableSound();
   Q.PLAYER = 1;
@@ -357,22 +357,27 @@ window.addEventListener("load",function() {
         },
 
       	MarioWins: function(col){
-    	if(col.obj.isA("Player")) {
+    	if(col.obj.isA("Batman")) {
 				Q.stageScene("mainMenu");
 		}
       }
        
       });
 
-
      Q.animations("cintainferior",{
       cintainferior: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
      });
     Q.Sprite.extend("cintainferior",{
       init: function(p) {
-        this._super(p, { sheet: "cintainferior",sprite:"cintainferior"});
-        this.add("animation");
+        this._super(p, { sheet: "cintainferior",sprite:"cintainferior",gravity:0});
+        this.add("animation,2d,aiBounce");
+        this.on("bump.top",this,"MarioWins");
         this.play("cintainferior");
+      },
+        MarioWins: function(col){
+    	if(col.obj.isA("Batman")) {
+         
+        }
       },
       step: function(dt) {} });
     
@@ -417,13 +422,14 @@ window.addEventListener("load",function() {
      });
     Q.Sprite.extend("cintaSup",{
       init: function(p) {
-        this._super(p, { sheet: "cintaSup",sprite:"cintaSup"});
-        this.add("animation");
+        this._super(p, { sheet: "cintaSup",sprite:"cintaSup",gravity:0});
+        this.add("animation,2d,aiBounce");
+        this.on("bump.top",this,"MarioWins");
         this.play("cintaSup");
       },
       MarioWins: function(col){
-    	if(col.obj.isA("Player")) {
-         Q.stageScene('mainMenu');
+    	if(col.obj.isA("Batman")) {
+         
         }
       },
       step: function(dt) {} });
@@ -556,7 +562,7 @@ window.addEventListener("load",function() {
       button2.on("click",function() { 
         Q.clearStages();
         Q.stageScene('level2');
-        Q.stageScene('hud', 3, Q('Player').first().p);
+        Q.stageScene('hud', 3, Q('Batman').first().p);
       });
 
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
@@ -643,7 +649,7 @@ window.addEventListener("load",function() {
 
      Q.scene("level2",function(stage) {
       Q.stageTMX("level2.tmx",stage);
-      Mario = stage.insert(new Q.Player({x: 100,y: 60}));
+      Mario = stage.insert(new Q.Batman({x: 100,y: 100}));
       stage.add("viewport");
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
@@ -730,7 +736,7 @@ window.addEventListener("load",function() {
              sprite: 'Joker-animations',
              frame: 0,
              x:400, 
-             y:550,
+             y:476,
              gravity: 0,
              });
              this.add('2d, aiBounce, animation');
@@ -786,11 +792,11 @@ window.addEventListener("load",function() {
 
     Q.scene("level3",function(stage) {
       Q.stageTMX("level3.tmx",stage);
-      Batman = stage.insert(new Q.Batman({x: 80,y: 30}));
+      Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
       stage.add("viewport").follow(Batman,{x:false, y:false});
-      stage.centerOn(250,400);
+     // stage.centerOn(250,400);
       stage.unfollow(); 
-      stage.insert(new Q.Joker({x:400, y:550}));
+      stage.insert(new Q.Joker({x:400, y:476}));
       stage.insert(new Q.JokerRunning());
       //para probar los rayos
       //stage.insert(new Q.JokerRayos({x:270, y:10}));
