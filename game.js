@@ -584,7 +584,7 @@ window.addEventListener("load",function() {
       }));
       
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/7, fill: "#33088F", label: "Stage 1", color: "#33088F" }))
-      background.on("click",function() {
+      Q.input.on("confirm",function() {
         Q.clearStages();
         Q.stageScene('level1');
         Q.stageScene('hud', 3, Q('Batman').first().p);
@@ -606,7 +606,7 @@ window.addEventListener("load",function() {
     });
 
 
-   Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
+   Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
     "bloopa.json, bloopa.png,acc1.png,acc1.json,cuchillas.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json", function() {
@@ -664,7 +664,7 @@ window.addEventListener("load",function() {
     });
 
     Q.scene("level1",function(stage) {
-      Q.stageTMX("level.tmx",stage);
+      Q.stageTMX("level1.tmx",stage);
       Mario = stage.insert(new Q.Batman({x: 30,y: 30}));
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
