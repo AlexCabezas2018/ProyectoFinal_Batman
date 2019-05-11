@@ -1,15 +1,15 @@
 // Adrián Camacho Pérez
 
 window.addEventListener("load",function() {
-    var Q = window.Q = Quintus() 
-            .include("Sprites, Scenes, Input, Touch, UI, TMX, Anim, 2D")
-            .setup({ width: 544, height: 544}) 
-            .controls().touch()
-
-    Q.PLAYER = 1;
-    Q.COIN = 2;
-    Q.ENEMY = 4;
-
+  var Q = window.Q = Quintus({ development: true, audioSupported: ["mp3", "ogg"] }) 
+          .include("Sprites, Scenes, Input, Touch, UI, TMX, Anim, Audio, 2D")
+          .setup({ width: 480, height: 372}) 
+          .controls().touch()
+          Q.enableSound();
+  Q.PLAYER = 1;
+  Q.COIN = 2;
+  Q.ENEMY = 4;
+  var time = 0;
 
 
 
@@ -553,7 +553,7 @@ window.addEventListener("load",function() {
       });
 
       var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
-      button2.on("click",function() {
+      button2.on("click",function() { 
         Q.clearStages();
         Q.stageScene('level2');
         Q.stageScene('hud', 3, Q('Player').first().p);
@@ -562,13 +562,13 @@ window.addEventListener("load",function() {
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
       background.on("click",function() {
         Q.clearStages();
-        Q.stageScene('level1');
+        Q.stageScene('level3');
         Q.stageScene('hud', 3, Q('Batman').first().p);
       });
     });
 
 
-   Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
+   Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
     "bloopa.json, bloopa.png,acc1.png,acc1.json,cuchillas.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json", function() {
@@ -587,6 +587,8 @@ window.addEventListener("load",function() {
         Q.compileSheets("cuchillas2.png","cuchillas2.json");
         Q.compileSheets("cuchillas3.png","cuchillas3.json");
         Q.compileSheets("acc1.png","acc1.json");
+        Q.sheet("Joker","joker.png");
+        Q.compileSheets("joker.png","joker.json");
         /* no animations
         Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
         Q.sheet("goomba","goomba.png", { tilew: 32, tileh: 32 });
@@ -663,4 +665,141 @@ window.addEventListener("load",function() {
       });
       box.fit(20);
     });
+
+    /*********************STAGE 3**************************** */
+
+    Q.animations('Joker-animations', {
+      thunder_R:{frames:[0,1], rate: 1/3, flip:"x"},
+      thunder_L:{frames:[0,1], rate: 1/3},
+      fight_R:{ frames:[2,3,4,5,6], rate: 1/3, flip:"x"},
+      fight_L: { frames: [2,3,4,5,6], rate: 1/3},
+      rayos:{ frames: [0,1,2], rate:1/3, loop:true},
+      run_L:{ frames: [1,2,3,4,5,6], rate:1/3},//JOKERRUNNING
+      run_R:{ frames: [1,2,3,4,5,6], rate:1/3, flip:"x"},//JOKERRUNNING
+      die_L:{ frames:[0,1,2,3,4,5], rate:1},//JokerDie
+      die_R:{ frames:[0,1,2,3,4,5], rate:1, flip:"x"},//JokerDie
+      stand_R:{ frames: [2], rate: 1/3, flip:"x"},
+      stand_L:{ frames: [2], rate: 1/3},
+      boomerang_R:{frames:[0,1,2,3,4], rate:1/3, flip:"x"},
+      boomerang_L:{frames:[0,1,2,3,4], rate:1/3},
+      shot_L:{frames:[0,1,2,3], rate:1/8, loop: true},
+      shot_R:{frames:[0,1,2,3], rate:1/8, flip:"x", loop: true}
+    });
+
+    Q.Sprite.extend("JokerBalas", { 
+      init: function(p) {
+         this._super(p, {
+           vx: -10,
+           sheet: 'JokerBalas',
+           sprite: 'Joker-animations',
+           frame: 0,
+           x:250, 
+           y:490,
+           gravity: 0,
+           });
+           this.p.initialY = this.p.y;
+           this.add('2d, aiBounce, animation');
+           this.play("shot_L");
+       },
+
+       step: function(dt){}
+      });
+
+    Q.Sprite.extend("JokerBoomerang", { 
+      init: function(p) {
+         this._super(p, {
+           vx: -10, 
+           sheet: 'JokerBoomerang',
+           sprite: 'Joker-animations',
+           frame: 0,
+           x:250, 
+           y:490,
+           gravity: 0,
+           });
+           this.add('2d, aiBounce, animation');
+           this.play("boomerang_L");
+       },
+       step: function(dt){}
+      });
+     
+      Q.Sprite.extend("JokerRunning", { 
+        init: function(p) {
+           this._super(p, {
+             vx: 100, 
+             sheet: 'JokerRunning',
+             sprite: 'Joker-animations',
+             frame: 0,
+             x:400, 
+             y:550,
+             gravity: 0,
+             });
+             this.add('2d, aiBounce, animation');
+             this.play("run_L");
+         },
+         step: function(dt){}
+        });  
+
+    Q.Sprite.extend("JokerRayos", {  
+      init: function(p) {
+         this._super(p, {
+           vx: 0, 
+           sheet: 'JokerRayos',
+           sprite: 'Joker-animations',
+           vy:-10,
+           rangeY:90,
+           gravity: 0,
+           //ax: 0,
+           ay:150,
+           });
+           this.p.initialY = this.p.y;
+           this.add('2d, aiBounce, animation');
+           this.play("rayos");
+       },
+       step: function(dt){
+         if(this.p.y >= 465){
+           this.destroy();
+         }
+      }
+      });
+
+    Q.Sprite.extend("Joker", {
+      init: function(p) {
+         this._super(p, {
+           sheet: 'Joker',
+           sprite: 'Joker-animations',
+           x:0, 
+           y:0,
+           });
+           this.add('2d, aiBounce, animation');
+           this.play("stand_L");
+       },
+       
+       step: function(dt){
+        time += dt;
+        if(time >= 0.05) {
+          this.destroy();
+        }
+       },
+
+      });
+    /*Mejorar las dimensiones de sheet*/
+
+    Q.scene("level3",function(stage) {
+      Q.stageTMX("level3.tmx",stage);
+      Batman = stage.insert(new Q.Batman({x: 80,y: 30}));
+      stage.add("viewport").follow(Batman,{x:false, y:false});
+      stage.centerOn(250,400);
+      stage.unfollow(); 
+      stage.insert(new Q.Joker({x:400, y:550}));
+      stage.insert(new Q.JokerRunning());
+      //para probar los rayos
+      //stage.insert(new Q.JokerRayos({x:270, y:10}));
+      //stage.insert(new Q.JokerRayos({x:130, y:10}));
+      //stage.insert(new Q.JokerRayos({x:200, y:10}));
+      //stage.insert(new Q.JokerBoomerang());
+      //stage.insert(new Q.JokerBalas());
+      //musica del nivel de joker
+     Q.audio.play("music_joker.mp3", {loop: true});
+    });
+    /*************fin del level3*********** */
 });
