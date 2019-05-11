@@ -583,7 +583,7 @@ window.addEventListener("load",function() {
           y: Q.height/2
       }));
       
-      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/7, fill: "#33088F", label: "Stage 1", color: "#33088F" }))
+      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/7, fill: "#33088F", label: "1 ENTER", color: "#33088F" }))
       Q.input.on("confirm",function() {
         Q.clearStages();
         Q.stageScene('level1');
@@ -665,7 +665,7 @@ window.addEventListener("load",function() {
 
     Q.scene("level1",function(stage) {
       Q.stageTMX("level1.tmx",stage);
-      Mario = stage.insert(new Q.Batman({x: 30,y: 30}));
+      Mario = stage.insert(new Q.Batman({x: 30,y: 420}));
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
