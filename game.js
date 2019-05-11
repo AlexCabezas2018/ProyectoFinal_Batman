@@ -377,33 +377,57 @@ window.addEventListener("load",function() {
       },
       step: function(dt) {} });
     
+    Q.animations("ia",{
+      ia: { frames: [0, 1, 2,3], rate: 1/20, flip: false, loop: true }
+     });
   Q.Sprite.extend("ia",{
       init: function(p) {
-        this._super(p, { sheet: 'ia'});
+        this._super(p, { sheet: 'ia', sprite:"ia"});
+        this.add("animation");
+        this.play("ia");
       },
       step: function(dt) {} });
-
+   Q.animations("ia2",{
+      ia2: { frames: [0, 1, 2,3], rate: 1/15, flip: false, loop: true }
+     });
     Q.Sprite.extend("ia2",{
       init: function(p) {
-        this._super(p, { sheet: 'ia2'});
+         this._super(p, { sheet: 'ia2', sprite:"ia2"});
+        this.add("animation");
+        this.play("ia2");
       },
       step: function(dt) {} });
-    
+
+    Q.animations("cuchillas",{
+      cuchillas: { frames: [0, 1, 2,3], rate: 1/10, flip: false, loop: true }
+     });
     Q.Sprite.extend("cuchillas",{
       init: function(p) {
-        this._super(p, { sheet: 'cuchillas'});
+          this._super(p, { sheet: 'cuchillas', sprite:"cuchillas"});
+        this.add("animation");
+        this.play("cuchillas");
       },
       step: function(dt) {} });
 
+     Q.animations("cuchillas2",{
+      cuchillas2: { frames: [0, 1, 2,3], rate: 1/10, flip: false, loop: true }
+     });
     Q.Sprite.extend("cuchillas2",{
       init: function(p) {
-        this._super(p, { sheet: 'cuchillas2'});
+        this._super(p, { sheet: 'cuchillas2', sprite:"cuchillas2"});
+        this.add("animation");
+        this.play("cuchillas2");
       },
       step: function(dt) {} });
 
+     Q.animations("cuchillas3",{
+      cuchillas3: { frames: [0, 1, 2,3], rate: 1/10, flip: false, loop: true }
+     });
     Q.Sprite.extend("cuchillas3",{
       init: function(p) {
-        this._super(p, { sheet: 'cuchillas3'});
+        this._super(p, { sheet: 'cuchillas3', sprite:"cuchillas3"});
+        this.add("animation");
+        this.play("cuchillas3");
       },
       step: function(dt) {} });
 
@@ -512,7 +536,7 @@ window.addEventListener("load",function() {
 
 
    Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
-    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas2.png,cuchillas3.png,cintaSup.png,cintaSup.json,ia.png,ia2.png,barraElect.png,barraElect.json," +  
+    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
@@ -524,7 +548,11 @@ window.addEventListener("load",function() {
          Q.compileSheets("cintainferior.png","cintainferior.json");
         Q.compileSheets("cintaSup.png","cintaSup.json");
         Q.compileSheets("barraElect.png","barraElect.json");
-
+        Q.compileSheets("ia.png","ia.json");
+        Q.compileSheets("ia2.png","ia2.json");
+         Q.compileSheets("cuchillas.png","cuchillas.json");
+        Q.compileSheets("cuchillas2.png","cuchillas2.json");
+        Q.compileSheets("cuchillas3.png","cuchillas3.json");
         /* no animations
         Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
         Q.sheet("goomba","goomba.png", { tilew: 32, tileh: 32 });
