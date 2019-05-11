@@ -8,6 +8,6 @@
     "batmanHittedRunning": {},
     "batmanPunchCrouched": {}, 
     "batmanPunchJumping": {},
-    "batmanPunch": {},
+    "batmanPunch": {"sx":2, "sy":107,"tilew":30  ,"tileh":32, "frames": 4},
     "batmanBounce": {}
 }

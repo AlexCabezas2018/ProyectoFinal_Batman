@@ -33,8 +33,8 @@ window.addEventListener("load",function() {
       punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
       punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
       punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
-      punch_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
-      punch_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
+      punch_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
       bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
 
@@ -55,66 +55,98 @@ window.addEventListener("load",function() {
               type: Q.PLAYER,
               isJumping: false,
               isCrouching: false,
-              prevDir: "right"
+              isPunching: false
+
           });
           this.add('2d, platformerControls, animation');
+          Q.input.on("up", this, "jump");
+          Q.input.on("fire", this, "punch");
+          this.on("punchFinishedTrigger");
+
           //Implementar las colisiones y los disparos.
       } ,
 
       step: function(dt) {
           /* Movimientos en aire */ 
-          if(Q.inputs["up"] && !this.p.isCrouching && !this.p.isJumping){
-            this.p.gravity = 0.2;
-            this.p.staticAnim = true;
-            this.p.isJumping = true;
-          }
-
           if(!Q.inputs["up"]) {
             this.p.gravity = 1;
             this.p.isJumping = false;
           }
-
-          /* Movimientos en tierra */
-
-          if(Q.inputs["down"] && !this.p.isJumping){
-            this.p.sheet = "crouch";
-            this.play("crouch_" + this.p.direction);
-            this.p.staticAnim = true;
-            this.p.isCrouching = true;
-            if(this.has('platformerControls')){ //Desactivamos el componente para que no pueda moverse mientras está agachado
-              this.del('platformerControls');
-              this.p.vx = 0;
-              this.p.prevDir = this.p.direction;
+          
+          if(Q.inputs["down"]){
+            if(!Q.inputs["left"] && !Q.inputs["right"]){
+              this.crouch();
             }
+            else this.p.isCrouching = false;
           }
           else {
-            this.p.isCrouching = false;
-            if(!this.has('platformerControls')) { //Para que se mueva
-              this.add('platformerControls');
-              this.p.direction = this.p.prevDir;
-            }          
+              this.p.isCrouching = false;
           }
 
+
+          /* Movimientos en tierra */
+          if(this.p.isPunching) this.p.vx = 0;
+
+
           /* Movimientos básicos (correr) */
-          if(!this.p.isJumping && !this.p.isCrouching){
+          if(!this.p.isJumping && !this.p.isCrouching && !this.p.isPunching){
             if(this.p.vx == 0 && this.p.staticAnim) {
               this.p.sheet = "batmanStatic";
               this.play("static_" + this.p.direction);
               this.p.staticAnim = false;
             }
-            else if(this.p.vx > 0) {
-                this.p.sheet = "batmanRunning"
-                this.play('running_right');
-                this.p.anim = true;
-                this.p.staticAnim = true;
-            }
-            else if(this.p.vx < 0) {
-                this.p.sheet = "batmanRunning"
-                this.play('running_left');
-                this.p.staticAnim = true;
-            }
+          }
+
+          if(this.p.vx > 0 && !this.p.isPunching) {
+            this.p.sheet = "batmanRunning"
+            this.play('running_right');
+            this.p.anim = true;
+            this.p.staticAnim = true;
+          }
+          else if(this.p.vx < 0 && !this.p.isPunching) {
+              this.p.sheet = "batmanRunning"
+              this.play('running_left');
+              this.p.staticAnim = true;
+          }
+      },
+
+      jump: function() {
+        this.p.gravity = 0.5;
+        this.p.staticAnim = true;
+        this.p.isJumping = true;
+      },
+
+      crouch: function() {
+        if(!this.p.isJumping && this.p.vy == 0){
+          this.p.sheet = "crouch";
+          this.play("crouch_" + this.p.direction);
+          this.p.staticAnim = true;
+          this.p.isCrouching = true;//Desactivamos el componente para que no pueda moverse mientras está agachado
         }
       },
+      
+      punch: function() {
+        //this.del('platformerControls');
+        if(this.p.isCrouching) {
+          //Animaciones cuando batman da puñetazos agachado
+        }
+        else if(this.p.isJumping){
+          //Animaciones cuando batman da puñetazos en el aire
+        }
+        else {
+          this.p.vx = 0;
+          this.p.isPunching = true;
+          this.p.sheet = "batmanPunch";
+          this.play("punch_" + this.p.direction, 1);
+        }
+      },
+
+      punchFinishedTrigger: function() {
+        this.p.isPunching = false;
+      }
+
+
+
 
   });
 
