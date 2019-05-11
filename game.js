@@ -431,9 +431,14 @@ window.addEventListener("load",function() {
       },
       step: function(dt) {} });
 
+     Q.animations("acc1",{
+      acc1: { frames: [0, 1, 2,3], rate: 1/10, flip: false, loop: true }
+     });
     Q.Sprite.extend("acc1",{
       init: function(p) {
-        this._super(p, { sheet: 'acc1'});
+        this._super(p, { sheet: 'acc1', sprite:"acc1"});
+        this.add("animation");
+        this.play("acc1");
       },
 
       step: function(dt) {} });
@@ -536,7 +541,7 @@ window.addEventListener("load",function() {
 
 
    Q.loadTMX("level.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
-    "bloopa.json, bloopa.png,acc1.png,cuchillas.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
+    "bloopa.json, bloopa.png,acc1.png,acc1.json,cuchillas.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json", function() {
         Q.compileSheets("mario_small.png","mario_small.json");
@@ -553,6 +558,7 @@ window.addEventListener("load",function() {
          Q.compileSheets("cuchillas.png","cuchillas.json");
         Q.compileSheets("cuchillas2.png","cuchillas2.json");
         Q.compileSheets("cuchillas3.png","cuchillas3.json");
+        Q.compileSheets("acc1.png","acc1.json");
         /* no animations
         Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
         Q.sheet("goomba","goomba.png", { tilew: 32, tileh: 32 });
