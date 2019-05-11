@@ -344,6 +344,27 @@ window.addEventListener("load",function() {
       },
     });
      /*****************************************************************Objetos Stage 2*************************************************************************************/
+
+
+      Q.component('defCuch', {
+
+        added: function() {
+    	this.entity.add("animation,2d,aiBounce");
+        this.entity.on("bump.top",this,"MarioWins");
+    	this.entity.on("bump.left",this,"MarioWins");
+    	this.entity.on("bump.right",this,"MarioWins");
+    	this.entity.on("bump.bottom",this,"MarioWins");
+        },
+
+      	MarioWins: function(col){
+    	if(col.obj.isA("Player")) {
+				Q.stageScene("mainMenu");
+		}
+      }
+       
+      });
+
+
      Q.animations("cintainferior",{
       cintainferior: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
      });
@@ -354,25 +375,14 @@ window.addEventListener("load",function() {
         this.play("cintainferior");
       },
       step: function(dt) {} });
-
-     Q.animations("cintaSup",{
-      cintaSup: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
-     });
-    Q.Sprite.extend("cintaSup",{
-      init: function(p) {
-        this._super(p, { sheet: "cintaSup",sprite:"cintaSup"});
-        this.add("animation");
-        this.play("cintaSup");
-      },
-      step: function(dt) {} });
     
     Q.animations("barraElect",{
       barraElect: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
      });
     Q.Sprite.extend("barraElect",{
       init: function(p) {
-        this._super(p, { sheet: 'barraElect',sprite:"barraElect"});
-        this.add("animation");
+        this._super(p, { sheet: 'barraElect',sprite:"barraElect",gravity:0});
+        this.add("defCuch");
         this.play("barraElect");
       },
       step: function(dt) {} });
@@ -401,10 +411,27 @@ window.addEventListener("load",function() {
     Q.animations("cuchillas",{
       cuchillas: { frames: [0, 1, 2,3], rate: 1/10, flip: false, loop: true }
      });
+
+    Q.animations("cintaSup",{
+      cintaSup: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+     });
+    Q.Sprite.extend("cintaSup",{
+      init: function(p) {
+        this._super(p, { sheet: "cintaSup",sprite:"cintaSup"});
+        this.add("animation");
+        this.play("cintaSup");
+      },
+      MarioWins: function(col){
+    	if(col.obj.isA("Player")) {
+         Q.stageScene('mainMenu');
+        }
+      },
+      step: function(dt) {} });
+
     Q.Sprite.extend("cuchillas",{
       init: function(p) {
-          this._super(p, { sheet: 'cuchillas', sprite:"cuchillas"});
-        this.add("animation");
+          this._super(p, { sheet: 'cuchillas', sprite:"cuchillas",gravity:0});
+        this.add("defCuch");
         this.play("cuchillas");
       },
       step: function(dt) {} });
@@ -414,8 +441,8 @@ window.addEventListener("load",function() {
      });
     Q.Sprite.extend("cuchillas2",{
       init: function(p) {
-        this._super(p, { sheet: 'cuchillas2', sprite:"cuchillas2"});
-        this.add("animation");
+        this._super(p, { sheet: 'cuchillas2', sprite:"cuchillas2",gravity:0});
+        this.add("defCuch");
         this.play("cuchillas2");
       },
       step: function(dt) {} });
@@ -425,8 +452,8 @@ window.addEventListener("load",function() {
      });
     Q.Sprite.extend("cuchillas3",{
       init: function(p) {
-        this._super(p, { sheet: 'cuchillas3', sprite:"cuchillas3"});
-        this.add("animation");
+        this._super(p, { sheet: 'cuchillas3', sprite:"cuchillas3", gravity:0});
+        this.add("defCuch");
         this.play("cuchillas3");
       },
       step: function(dt) {} });
@@ -442,6 +469,7 @@ window.addEventListener("load",function() {
       },
 
       step: function(dt) {} });
+    
 
 
     /*******************************************************************************************************************************************************************/
@@ -528,7 +556,7 @@ window.addEventListener("load",function() {
       button2.on("click",function() {
         Q.clearStages();
         Q.stageScene('level2');
-        Q.stageScene('hud', 3, Q('Batman').first().p);
+        Q.stageScene('hud', 3, Q('Player').first().p);
       });
 
       var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
@@ -613,7 +641,7 @@ window.addEventListener("load",function() {
 
      Q.scene("level2",function(stage) {
       Q.stageTMX("level2.tmx",stage);
-      Mario = stage.insert(new Q.Batman({x: 30,y: 30}));
+      Mario = stage.insert(new Q.Player({x: 100,y: 60}));
       stage.add("viewport");
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
@@ -622,7 +650,7 @@ window.addEventListener("load",function() {
 
     Q.scene('endGame',function(stage) {
       var box = stage.insert(new Q.UI.Container({
-        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+        x: 30, y: 30, fill: "rgba(0,0,0,0.5)"
       }));
       
       var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",

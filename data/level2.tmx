@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="34" tileheight="34" infinite="0" nextlayerid="28" nextobjectid="488">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="16" height="17" tilewidth="34" tileheight="34" infinite="0" nextlayerid="37" nextobjectid="497">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
   <image source="../images/tiles.png" width="238" height="238"/>
   <tile id="0">
@@ -607,7 +607,7 @@
  <tileset firstgid="354" name="barraElect" tilewidth="34" tileheight="136" tilecount="4" columns="4">
   <image source="../images/barraElect.png" width="136" height="136"/>
   <tile id="0">
-  	<properties>
+   <properties>
     <property name="Class" value="barraElect"/>
     <property name="sheet" value="barraElect"/>
     <property name="sprite" value="barraElect"/>
@@ -623,7 +623,7 @@
  <imagelayer id="21" name="background">
   <image source="../images/background22.png" width="544" height="544"/>
  </imagelayer>
- <layer id="27" name="Collision" width="16" height="16">
+ <layer id="33" name="Collision" width="16" height="17">
   <properties>
    <property name="collision" value="true"/>
   </properties>
@@ -836,9 +836,9 @@
    <tile gid="260"/>
    <tile gid="261"/>
    <tile gid="262"/>
-   <tile/>
+   <tile gid="114"/>
    <tile gid="115"/>
-   <tile gid="116"/>
+   <tile/>
    <tile/>
    <tile gid="162"/>
    <tile gid="163"/>
@@ -852,10 +852,10 @@
    <tile gid="276"/>
    <tile gid="277"/>
    <tile gid="278"/>
-   <tile/>
+   <tile gid="130"/>
    <tile gid="131"/>
    <tile gid="132"/>
-   <tile gid="209"/>
+   <tile/>
    <tile gid="178"/>
    <tile gid="179"/>
    <tile gid="180"/>
@@ -868,10 +868,10 @@
    <tile gid="292"/>
    <tile gid="293"/>
    <tile gid="294"/>
-   <tile/>
+   <tile gid="146"/>
    <tile gid="147"/>
    <tile gid="148"/>
-   <tile gid="225"/>
+   <tile/>
    <tile gid="194"/>
    <tile gid="195"/>
    <tile gid="196"/>
@@ -884,6 +884,22 @@
    <tile gid="308"/>
    <tile gid="309"/>
    <tile gid="310"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
   </data>
  </layer>
  <objectgroup id="26" name="cinitaInferior">
@@ -898,6 +914,6 @@
   <object id="472" gid="342" x="111" y="543" width="34" height="34"/>
   <object id="476" gid="346" x="68" y="476" width="34" height="34"/>
   <object id="485" gid="350" x="82" y="213" width="40" height="45"/>
-  <object id="487" gid="354" x="376.333" y="273.333" width="34" height="136"/>
+  <object id="487" gid="354" x="376.333" y="273.333" width="34" height="136" visible="0"/>
  </objectgroup>
 </map>
