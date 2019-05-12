@@ -19,22 +19,22 @@ window.addEventListener("load",function() {
       static_right: { frames: [3, 2, 1], rate: 1/8, flip: false, loop: false },
       running_left: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: "x" } ,
       running_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: false },
+      punch_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/2, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      crouch_left: { frames: [0], rate: 1/15, flip: "x" },
+      crouch_right: { frames: [0], rate: 1/15, flip: false },
 
       jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
       jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
-      crouch_left: { frames: [0], rate: 1/15, flip: "x" },
-      crouch_right: { frames: [0], rate: 1/15, flip: false },
       die: { frames: [0, 1, 2, 3, 4, 5], rate: 1/15 },
       hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false },
       hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x" },
       hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
       hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
-      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
-      punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
       punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
       punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
-      punch_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
-      punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
       bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
 
@@ -117,7 +117,7 @@ window.addEventListener("load",function() {
       },
 
       crouch: function() {
-        if(!this.p.isJumping && this.p.vy == 0){
+        if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching){
           this.p.sheet = "crouch";
           this.play("crouch_" + this.p.direction);
           this.p.staticAnim = true;
@@ -126,16 +126,19 @@ window.addEventListener("load",function() {
       },
       
       punch: function() {
-        //this.del('platformerControls');
+        this.p.isPunching = true;
+
         if(this.p.isCrouching) {
           //Animaciones cuando batman da puñetazos agachado
+          this.p.vx = 0;
+          this.p.sheet = "batmanPunchCrouched";
+          this.play("punch_crouched_" + this.p.direction, 1);
         }
         else if(this.p.isJumping){
           //Animaciones cuando batman da puñetazos en el aire
         }
         else {
           this.p.vx = 0;
-          this.p.isPunching = true;
           this.p.sheet = "batmanPunch";
           this.play("punch_" + this.p.direction, 1);
         }
@@ -144,10 +147,6 @@ window.addEventListener("load",function() {
       punchFinishedTrigger: function() {
         this.p.isPunching = false;
       }
-
-
-
-
   });
 
 
