@@ -704,7 +704,9 @@ window.addEventListener("load",function() {
     });
 
     /*********************STAGE 3**************************** */
-
+    // si ha muerto joker
+      var dieJoker = false;
+      
     Q.animations('Joker-animations', {
       thunder_R:{frames:[0,1], rate: 1/3, flip:"x"},
       thunder_L:{frames:[0,1], rate: 1/3},
@@ -713,14 +715,41 @@ window.addEventListener("load",function() {
       rayos:{ frames: [0,1,2], rate:1/3, loop:true},
       run_L:{ frames: [1,2,3,4,5,6], rate:1/3},//JOKERRUNNING
       run_R:{ frames: [1,2,3,4,5,6], rate:1/3, flip:"x"},//JOKERRUNNING
-      die_L:{ frames:[0,1,2,3,4,5], rate:1},//JokerDie
-      die_R:{ frames:[0,1,2,3,4,5], rate:1, flip:"x"},//JokerDie
+      die_L:{ frames:[0,1,2,3,4,5], rate:1, trigger: 'muerte', loop: false},//JokerDie
+      die_R:{ frames:[0,1,2,3,4,5], rate:1, flip:"x", trigger: 'muerte'},//JokerDie
       stand_R:{ frames: [2], rate: 1/3, flip:"x"},
       stand_L:{ frames: [2], rate: 1/3},
       boomerang_R:{frames:[0,1,2,3,4], rate:1/3, flip:"x"},
       boomerang_L:{frames:[0,1,2,3,4], rate:1/3},
       shot_L:{frames:[0,1,2,3], rate:1/8, loop: true},
       shot_R:{frames:[0,1,2,3], rate:1/8, flip:"x", loop: true}
+    });
+
+    //componente
+
+    Q.component('defecto', {
+
+      added: function() {
+      this.entity.on("bump.left",this,"JokerRun");
+      this.entity.on("bump.right",this,"JokerRun");
+      },
+
+      JokerRun: function(col){
+        if(col.obj.isA("Batman")) {  //perdiendo vidas el joker
+          if(Q.inputs["fire"]){  
+            Q.state.dec("lives", 1);
+            if(Q.state.get("lives") < 0){
+              this.entity.del("2d");
+              this.entity.muerte(); //Pierde osea muere
+              dieJoker = true;
+            }
+          }
+          else{
+            //si no esta peleando debe morir batman
+          }
+        }
+      }
+     
     });
 
     Q.Sprite.extend("JokerBalas", { 
@@ -762,18 +791,34 @@ window.addEventListener("load",function() {
       Q.Sprite.extend("JokerRunning", { 
         init: function(p) {
            this._super(p, {
-             vx: 100, 
+             vx: -100, 
              sheet: 'JokerRunning',
              sprite: 'Joker-animations',
              frame: 0,
              x:400, 
              y:476,
              gravity: 0,
+             lifesJoker : 5,
              });
              this.add('2d, aiBounce, animation');
+             this.add("defecto");
              this.play("run_L");
          },
-         step: function(dt){}
+         step: function(dt){
+          time += dt;
+          if(time >= 20) {
+            if(dieJoker){
+                  this.destroy();
+                  Q.clearStages();
+                  Q.stageScene('mainMenu');
+            }
+          }
+         },
+
+         muerte: function(){
+          this.p.sheet = "JokerDie";
+          this.play("die_L");
+         }
         });  
 
     Q.Sprite.extend("JokerRayos", {  
@@ -804,8 +849,6 @@ window.addEventListener("load",function() {
          this._super(p, {
            sheet: 'Joker',
            sprite: 'Joker-animations',
-           x:0, 
-           y:0,
            });
            this.add('2d, aiBounce, animation');
            this.play("stand_L");
@@ -822,6 +865,7 @@ window.addEventListener("load",function() {
     /*Mejorar las dimensiones de sheet*/
 
     Q.scene("level3",function(stage) {
+      Q.state.reset({score: 0, lives: 3});
       Q.stageTMX("level3.tmx",stage);
       Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
       stage.add("viewport").follow(Batman,{x:false, y:false});
@@ -836,7 +880,7 @@ window.addEventListener("load",function() {
       //stage.insert(new Q.JokerBoomerang());
       //stage.insert(new Q.JokerBalas());
       //musica del nivel de joker
-     Q.audio.play("music_joker.mp3", {loop: true});
+     //Q.audio.play("music_joker.mp3", {loop: true});
     });
     /*************fin del level3*********** */
 });
