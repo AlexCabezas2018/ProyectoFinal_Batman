@@ -21,25 +21,25 @@ window.addEventListener("load",function() {
       running_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: false },
       punch_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
       punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/2, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
       punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       crouch_left: { frames: [0], rate: 1/15, flip: "x" },
       crouch_right: { frames: [0], rate: 1/15, flip: false },
+      jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x", loop: false },
+      jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false, loop: false },
+      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger'},
+      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
 
-      jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
-      jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
       die: { frames: [0, 1, 2, 3, 4, 5], rate: 1/15 },
       hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false },
       hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x" },
       hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
       hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
-      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
-      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
       bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
       bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
 
       //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
-  });
+    });
 
   Q.Sprite.extend("Batman", {
       init: function(p) {
@@ -50,6 +50,7 @@ window.addEventListener("load",function() {
               x: 0,
               y: 0,
               scale: 2, //Aquí se ajusta el tamaño.
+              health: 8,
               staticAnim: true,
               gravity: 1,
               type: Q.PLAYER,
@@ -59,37 +60,41 @@ window.addEventListener("load",function() {
 
           });
           this.add('2d, platformerControls, animation');
-          Q.input.on("up", this, "jump");
           Q.input.on("fire", this, "punch");
           this.on("punchFinishedTrigger");
 
           //Implementar las colisiones y los disparos.
       } ,
 
+      /**
+       * Esta funcion es llamada en cada frame del juego. Comprueba su estado 
+       * y ejecuta las animaciones básicas. 
+       */
       step: function(dt) {
-          /* Movimientos en aire */ 
-          if(!Q.inputs["up"]) {
+
+          /* Movimientos en aire */
+          if(Q.inputs["up"]) {
+            if(this.p.vy == 0) this.p.isJumping = false;
+            else this.jump();
+          }
+          else {
             this.p.gravity = 1;
-            this.p.isJumping = false;
+            if(this.p.vy == 0) this.p.isJumping = false;
           }
           
           if(Q.inputs["down"]){
-            if(!Q.inputs["left"] && !Q.inputs["right"]){
-              this.crouch();
-            }
+            if(!Q.inputs["left"] && !Q.inputs["right"]) this.crouch();
             else this.p.isCrouching = false;
           }
-          else {
-              this.p.isCrouching = false;
-          }
+          else this.p.isCrouching = false;
 
 
           /* Movimientos en tierra */
-          if(this.p.isPunching) this.p.vx = 0;
+          if(this.p.isPunching && !this.p.isJumping) this.p.vx = 0; //Esto hace la animacion de golpeo más acorde con la animación original.
 
 
           /* Movimientos básicos (correr) */
-          if(!this.p.isJumping && !this.p.isCrouching && !this.p.isPunching){
+          if(!this.p.isJumping && !this.p.isCrouching && !this.p.isPunching && this.p.vy == 0){
             if(this.p.vx == 0 && this.p.staticAnim) {
               this.p.sheet = "batmanStatic";
               this.play("static_" + this.p.direction);
@@ -97,25 +102,32 @@ window.addEventListener("load",function() {
             }
           }
 
-          if(this.p.vx > 0 && !this.p.isPunching) {
-            this.p.sheet = "batmanRunning"
-            this.play('running_right');
-            this.p.anim = true;
+          if(this.p.vx != 0 && !this.p.isPunching && !this.p.isJumping){
+            this.p.sheet = "batmanRunning";
             this.p.staticAnim = true;
-          }
-          else if(this.p.vx < 0 && !this.p.isPunching) {
-              this.p.sheet = "batmanRunning"
-              this.play('running_left');
-              this.p.staticAnim = true;
+            this.play('running_' + this.p.direction);
           }
       },
 
+      /**
+       * Esta funcion es llamada cuando batman salta. Ejecuta la animacion.
+       */
       jump: function() {
-        this.p.gravity = 0.5;
+        this.p.gravity = 0.3;
         this.p.staticAnim = true;
-        this.p.isJumping = true;
+
+        if(!this.p.isJumping) {
+          this.p.sheet = "batmanJump";
+          this.p.isJumping = true;
+          this.play('jump_' + this.p.direction, 1);
+        }
       },
 
+
+      /**
+       * Es function se llama cuando batman se agacha. Comprueba si es posible agacharse y 
+       * si es asi, ejecuta la animacion
+       */
       crouch: function() {
         if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching){
           this.p.sheet = "crouch";
@@ -125,6 +137,11 @@ window.addEventListener("load",function() {
         }
       },
       
+
+      /**
+       * Esta funcion se llama cuando es presionada la tecla de golpear. Comprueba es que estado está y ejecuta la animacion
+       * correspondiente
+       **/
       punch: function() {
         this.p.isPunching = true;
 
@@ -135,7 +152,8 @@ window.addEventListener("load",function() {
           this.play("punch_crouched_" + this.p.direction, 1);
         }
         else if(this.p.isJumping){
-          //Animaciones cuando batman da puñetazos en el aire
+          this.p.sheet = "batmanPunchJumping";
+          this.play("punch_jumping_" + this.p.direction, 1);
         }
         else {
           this.p.vx = 0;
@@ -144,6 +162,9 @@ window.addEventListener("load",function() {
         }
       },
 
+      /**
+       * Esta funcion es llamada cuando ha terminado de golpear. Se actualiza el estado.
+       */
       punchFinishedTrigger: function() {
         this.p.isPunching = false;
       }
