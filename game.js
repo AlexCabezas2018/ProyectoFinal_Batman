@@ -23,18 +23,20 @@ window.addEventListener("load",function() {
       punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
       punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       crouch_left: { frames: [0], rate: 1/15, flip: "x" },
       crouch_right: { frames: [0], rate: 1/15, flip: false },
       jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x", loop: false },
       jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false, loop: false },
-      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger'},
-      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      die_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false },
+      die_left: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false, flip: "x" },
 
-      die: { frames: [0, 1, 2, 3, 4, 5], rate: 1/15 },
-      hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false },
-      hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x" },
-      hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false },
-      hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x" },
+      hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false, loop: false, trigger: 'allowToTakeDamage' },
+      hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x", loop: false, trigger: 'allowToTakeDamage' },
+      hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false, loop: false, trigger: 'allowToTakeDamage' },
+      hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x", loop: false, trigger: 'allowToTakeDamage' },
+
       bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
       bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
 
@@ -51,17 +53,21 @@ window.addEventListener("load",function() {
               y: 0,
               scale: 2, //Aquí se ajusta el tamaño.
               health: 8,
+              canTakeDamage: true,
               staticAnim: true,
               gravity: 1,
               type: Q.PLAYER,
+              jumpSpeed: -600,
               isJumping: false,
               isCrouching: false,
-              isPunching: false
+              isPunching: false,
+              died: false
 
           });
           this.add('2d, platformerControls, animation');
           Q.input.on("fire", this, "punch");
           this.on("punchFinishedTrigger");
+          this.on("enemy.hit", "hit");
 
           //Implementar las colisiones y los disparos.
       } ,
@@ -73,16 +79,15 @@ window.addEventListener("load",function() {
       step: function(dt) {
 
           /* Movimientos en aire */
-          if(Q.inputs["up"]) {
+          if(!this.p.died && Q.inputs["up"]) {
             if(this.p.vy == 0) this.p.isJumping = false;
             else this.jump();
           }
           else {
-            this.p.gravity = 1;
             if(this.p.vy == 0) this.p.isJumping = false;
           }
           
-          if(Q.inputs["down"]){
+          if(!this.p.died && Q.inputs["down"]){
             if(!Q.inputs["left"] && !Q.inputs["right"]) this.crouch();
             else this.p.isCrouching = false;
           }
@@ -90,19 +95,21 @@ window.addEventListener("load",function() {
 
 
           /* Movimientos en tierra */
-          if(this.p.isPunching && !this.p.isJumping) this.p.vx = 0; //Esto hace la animacion de golpeo más acorde con la animación original.
+          if(!this.p.died && this.p.isPunching && !this.p.isJumping) this.p.vx = 0; //Esto hace la animacion de golpeo más acorde con la animación original.
 
 
           /* Movimientos básicos (correr) */
-          if(!this.p.isJumping && !this.p.isCrouching && !this.p.isPunching && this.p.vy == 0){
+          if(!this.p.died && !this.p.isJumping && !this.p.isCrouching && !this.p.isPunching 
+                                    && this.p.vy == 0 && this.p.canTakeDamage) {
             if(this.p.vx == 0 && this.p.staticAnim) {
               this.p.sheet = "batmanStatic";
               this.play("static_" + this.p.direction);
               this.p.staticAnim = false;
             }
+
           }
 
-          if(this.p.vx != 0 && !this.p.isPunching && !this.p.isJumping){
+          if(!this.p.died && this.p.vx != 0 && !this.p.isPunching && !this.p.isJumping && this.p.canTakeDamage){
             this.p.sheet = "batmanRunning";
             this.p.staticAnim = true;
             this.play('running_' + this.p.direction);
@@ -113,10 +120,9 @@ window.addEventListener("load",function() {
        * Esta funcion es llamada cuando batman salta. Ejecuta la animacion.
        */
       jump: function() {
-        this.p.gravity = 0.3;
         this.p.staticAnim = true;
 
-        if(!this.p.isJumping) {
+        if(!this.p.isJumping && this.p.canTakeDamage) {
           this.p.sheet = "batmanJump";
           this.p.isJumping = true;
           this.play('jump_' + this.p.direction, 1);
@@ -129,7 +135,7 @@ window.addEventListener("load",function() {
        * si es asi, ejecuta la animacion
        */
       crouch: function() {
-        if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching){
+        if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching && this.p.canTakeDamage){
           this.p.sheet = "crouch";
           this.play("crouch_" + this.p.direction);
           this.p.staticAnim = true;
@@ -162,11 +168,46 @@ window.addEventListener("load",function() {
         }
       },
 
+
+      /**
+       * Esta función es llamada cuando es golpeado. Se calcula si ha muerto o si se ha hitteado.
+       * Despues se analiza su estado y se ejecuta la animación correspondiente.
+       */
+      hit: function() {
+        this.p.health--;
+        if(this.p.canTakeDamage) {
+          this.p.canTakeDamage = false; //Para que no quite mucha vida de golpe, dejamos que termine la animacion para permitir recibir más daño
+          if(this.p.health == 0) {
+            this.stage.unfollow(); //Ya que vamos a retocar la posicion y eso puede afectar a la camara.
+            this.p.died = true;
+            this.p.y -= 43;
+            this.p.sheet = "batmanDie";
+            this.p.vx = 0;
+            this.play('die_' + this.p.direction);
+            this.del('2d');
+          }
+          else {
+            if(this.p.isCrouching) {
+              //Animacion de hit cuando está agachado
+            }
+            else if(this.p.isJumping) {
+              //Animación de hit cuando está saltando
+            }
+          }
+        }
+      },
+
+
       /**
        * Esta funcion es llamada cuando ha terminado de golpear. Se actualiza el estado.
        */
       punchFinishedTrigger: function() {
         this.p.isPunching = false;
+      },
+
+      /* Esta funcion es llamada cuando ha terminado la animacion de recibir daño */
+      allowToTakeDamage: function() {
+        this.p.canTakeDamage = true;
       }
   });
 
@@ -686,6 +727,7 @@ window.addEventListener("load",function() {
     Q.scene("level1",function(stage) {
       Q.stageTMX("level1.tmx",stage);
       Mario = stage.insert(new Q.Batman({x: 30,y: 420}));
+      console.log(Mario);
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
