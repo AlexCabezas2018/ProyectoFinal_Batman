@@ -32,13 +32,11 @@ window.addEventListener("load",function() {
       die_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false },
       die_left: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false, flip: "x" },
 
-      hitted_crouched_right: { frames: [0, 1], rate: 1/15, flip: false, loop: false, trigger: 'allowToTakeDamage' },
-      hitted_crounched_left: { frames: [0, 1], rate: 1/15, flip: "x", loop: false, trigger: 'allowToTakeDamage' },
-      hitted_running_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false, loop: false, trigger: 'allowToTakeDamage' },
-      hitted_running_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x", loop: false, trigger: 'allowToTakeDamage' },
+      hitted_crouched_right: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: false, loop: false, trigger: 'allowToTakeDamageTrigger' },
+      hitted_crouched_left: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: "x", loop: false, trigger: 'allowToTakeDamageTrigger' },
+      hitted_running_right: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: false, loop: false, trigger: 'allowToTakeDamageTrigger' },
+      hitted_running_left: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: "x", loop: false, trigger: 'allowToTakeDamageTrigger' },
 
-      bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
-      bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
 
       //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
     });
@@ -67,7 +65,8 @@ window.addEventListener("load",function() {
           this.add('2d, platformerControls, animation');
           Q.input.on("fire", this, "punch");
           this.on("punchFinishedTrigger");
-          this.on("enemy.hit", "hit");
+          this.on("allowToTakeDamageTrigger")
+          this.on("bump.right, bump.left", "hit"); //TODO, esto no debería ser así, solo debería interactuar de esta forma con los enemigos
 
           //Implementar las colisiones y los disparos.
       } ,
@@ -77,9 +76,8 @@ window.addEventListener("load",function() {
        * y ejecuta las animaciones básicas. 
        */
       step: function(dt) {
-
           /* Movimientos en aire */
-          if(!this.p.died && Q.inputs["up"]) {
+          if(!this.p.isJumping && Q.inputs["up"] && this.p.canTakeDamage) {
             if(this.p.vy == 0) this.p.isJumping = false;
             else this.jump();
           }
@@ -87,18 +85,17 @@ window.addEventListener("load",function() {
             if(this.p.vy == 0) this.p.isJumping = false;
           }
           
-          if(!this.p.died && Q.inputs["down"]){
+          if(!this.p.died && Q.inputs["down"] && this.p.canTakeDamage){
             if(!Q.inputs["left"] && !Q.inputs["right"]) this.crouch();
             else this.p.isCrouching = false;
           }
           else this.p.isCrouching = false;
 
-
           /* Movimientos en tierra */
-          if(!this.p.died && this.p.isPunching && !this.p.isJumping) this.p.vx = 0; //Esto hace la animacion de golpeo más acorde con la animación original.
+          if(!this.p.died && this.p.isPunching && !this.p.isJumping || !this.p.canTakeDamage) this.p.vx = 0; //Esto hace la animacion de golpeo más acorde con la animación original.
 
 
-          /* Movimientos básicos (correr) */
+          /* Movimientos básicos (quedarse estátco) */
           if(!this.p.died && !this.p.isJumping && !this.p.isCrouching && !this.p.isPunching 
                                     && this.p.vy == 0 && this.p.canTakeDamage) {
             if(this.p.vx == 0 && this.p.staticAnim) {
@@ -109,6 +106,7 @@ window.addEventListener("load",function() {
 
           }
 
+          /* Movimientos básicos (Movimiento de correr) */
           if(!this.p.died && this.p.vx != 0 && !this.p.isPunching && !this.p.isJumping && this.p.canTakeDamage){
             this.p.sheet = "batmanRunning";
             this.p.staticAnim = true;
@@ -121,8 +119,9 @@ window.addEventListener("load",function() {
        */
       jump: function() {
         this.p.staticAnim = true;
+        console.log("jumping");
 
-        if(!this.p.isJumping && this.p.canTakeDamage) {
+        if(!this.p.isJumping) {
           this.p.sheet = "batmanJump";
           this.p.isJumping = true;
           this.play('jump_' + this.p.direction, 1);
@@ -135,11 +134,12 @@ window.addEventListener("load",function() {
        * si es asi, ejecuta la animacion
        */
       crouch: function() {
+        console.log("crouched")
         if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching && this.p.canTakeDamage){
           this.p.sheet = "crouch";
           this.play("crouch_" + this.p.direction);
           this.p.staticAnim = true;
-          this.p.isCrouching = true;//Desactivamos el componente para que no pueda moverse mientras está agachado
+          this.p.isCrouching = true; //Desactivamos el componente para que no pueda moverse mientras está agachado
         }
       },
       
@@ -149,22 +149,28 @@ window.addEventListener("load",function() {
        * correspondiente
        **/
       punch: function() {
-        this.p.isPunching = true;
+        console.log("punching")
 
-        if(this.p.isCrouching) {
-          //Animaciones cuando batman da puñetazos agachado
-          this.p.vx = 0;
-          this.p.sheet = "batmanPunchCrouched";
-          this.play("punch_crouched_" + this.p.direction, 1);
-        }
-        else if(this.p.isJumping){
-          this.p.sheet = "batmanPunchJumping";
-          this.play("punch_jumping_" + this.p.direction, 1);
-        }
-        else {
-          this.p.vx = 0;
-          this.p.sheet = "batmanPunch";
-          this.play("punch_" + this.p.direction, 1);
+          if(this.p.canTakeDamage) {
+            this.p.isPunching = true;
+            if(this.p.isCrouching) {
+              //Animaciones cuando batman da puñetazos agachado
+              this.p.vx = 0;
+              this.p.sheet = "batmanPunchCrouched";
+              this.play("punch_crouched_" + this.p.direction, 1);
+
+            }
+            else if(this.p.isJumping){
+              //Animaciones cuando batman da puñetazos saltando
+              this.p.sheet = "batmanPunchJumping";
+              this.play("punch_jumping_" + this.p.direction, 1);
+            }
+            else {
+              //Animaciones cuando batman da puñetazos de pie
+              this.p.vx = 0;
+              this.p.sheet = "batmanPunch";
+              this.play("punch_" + this.p.direction, 1);
+            }
         }
       },
 
@@ -174,40 +180,50 @@ window.addEventListener("load",function() {
        * Despues se analiza su estado y se ejecuta la animación correspondiente.
        */
       hit: function() {
-        this.p.health--;
+        console.log(this);
         if(this.p.canTakeDamage) {
+          this.p.health--;
           this.p.canTakeDamage = false; //Para que no quite mucha vida de golpe, dejamos que termine la animacion para permitir recibir más daño
           if(this.p.health == 0) {
             this.stage.unfollow(); //Ya que vamos a retocar la posicion y eso puede afectar a la camara.
             this.p.died = true;
-            this.p.y -= 43;
+            this.p.y -= 43; //Retocamos la posición porque el sprite es muy largo y no aparecería en el lugar adecuado.
             this.p.sheet = "batmanDie";
             this.p.vx = 0;
             this.play('die_' + this.p.direction);
-            this.del('2d');
+            this.del('2d'); //Eliminamos ese componente para que batman no responda a controles ni a fisicas.1
           }
           else {
             if(this.p.isCrouching) {
               //Animacion de hit cuando está agachado
+              this.p.sheet = "batmanHittedCrouched";
+              this.play("hitted_crouched_" + this.p.direction, 1);
             }
-            else if(this.p.isJumping) {
-              //Animación de hit cuando está saltando
+            else {
+              //Animacion de hit cuando está de pié y saltando
+              if(!this.p.isJumping) {
+                this.p.vy = -240;
+              }
+
+              this.p.sheet = "batmanHittedRunning";
+              this.play("hitted_running_" + this.p.direction, 1);
             }
           }
         }
       },
-
 
       /**
        * Esta funcion es llamada cuando ha terminado de golpear. Se actualiza el estado.
        */
       punchFinishedTrigger: function() {
         this.p.isPunching = false;
+        this.p.staticAnim = true;
       },
 
       /* Esta funcion es llamada cuando ha terminado la animacion de recibir daño */
-      allowToTakeDamage: function() {
+      allowToTakeDamageTrigger: function() {
         this.p.canTakeDamage = true;
+        this.p.staticAnim = true;
       }
   });
 
