@@ -388,6 +388,8 @@ window.addEventListener("load",function() {
             }
             return;
           }
+
+          this.p.vx = -40;
           var p = this.p;
 
           p.vx += p.ax * dt;
@@ -798,8 +800,8 @@ window.addEventListener("load",function() {
 
 
         var EnemyAnimations = {
-            walk: { frames: [0,1,2,3], rate: 1/12, loop: true },
-            dead: { frames: [0,1,2,3], rate: 1/10 }
+            walk: { frames: [0,1,2,3], rate: 1/8, loop: true },
+            dead: { frames: [2], rate: 1/10 }
         };
 
         Q.animations("goomba", EnemyAnimations);
