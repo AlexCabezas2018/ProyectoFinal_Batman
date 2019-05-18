@@ -21,22 +21,33 @@ window.addEventListener("load",function() {
       running_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/10, flip: false },
       punch_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
       punch_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
-      punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
-      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      punch_crouched_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_crouched_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      punch_jumping_left: { frames: [0, 1, 2, 3], rate: 1/13, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      punch_jumping_right: { frames: [0, 1, 2, 3], rate: 1/13, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
       crouch_left: { frames: [0], rate: 1/15, flip: "x" },
       crouch_right: { frames: [0], rate: 1/15, flip: false },
       jump_left: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: "x", loop: false },
       jump_right: { frames: [0, 1, 2, 3, 4], rate: 1/15, flip: false, loop: false },
       die_right: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false },
       die_left: { frames: [0, 1, 2, 3, 4, 5], rate: 1/7, loop: false, flip: "x" },
-
       hitted_crouched_right: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: false, loop: false, trigger: 'allowToTakeDamageTrigger' },
       hitted_crouched_left: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: "x", loop: false, trigger: 'allowToTakeDamageTrigger' },
       hitted_running_right: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: false, loop: false, trigger: 'allowToTakeDamageTrigger' },
       hitted_running_left: { frames: [0, 1, 0, 1, 0, 1, 0, 1], rate: 1/9, flip: "x", loop: false, trigger: 'allowToTakeDamageTrigger' },
 
+      pistol_running_right: {},
+      pistol_running_left: {},
+      pistol_crouched_right: {},
+      pistol_crouched_left: {},
+      pistol_jumping_right: {},
+      pistol_jumping_left: {},
+
+      boomerang_running_right: {},
+      boomerang_running_left: {},
+      boomerang_crouched_right: {},
+      boomerang_jumping_right: {},
+      boomerang_jumping_left: {}
 
       //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
     });
@@ -59,6 +70,8 @@ window.addEventListener("load",function() {
               isJumping: false,
               isCrouching: false,
               isPunching: false,
+              hasCollectableGun: false,
+              hasCollectableBoomerang: false,
               died: false
 
           });
@@ -66,7 +79,7 @@ window.addEventListener("load",function() {
           Q.input.on("fire", this, "punch");
           this.on("punchFinishedTrigger");
           this.on("allowToTakeDamageTrigger")
-          this.on("bump.right, bump.left", "hit"); //TODO, esto no debería ser así, solo debería interactuar de esta forma con los enemigos
+          this.on("enemy.hit", "hit");
 
           //Implementar las colisiones y los disparos.
       } ,
@@ -119,8 +132,6 @@ window.addEventListener("load",function() {
        */
       jump: function() {
         this.p.staticAnim = true;
-        console.log("jumping");
-
         if(!this.p.isJumping) {
           this.p.sheet = "batmanJump";
           this.p.isJumping = true;
@@ -134,7 +145,6 @@ window.addEventListener("load",function() {
        * si es asi, ejecuta la animacion
        */
       crouch: function() {
-        console.log("crouched")
         if(!this.p.isJumping && this.p.vy == 0 && !this.p.isPunching && this.p.canTakeDamage){
           this.p.sheet = "crouch";
           this.play("crouch_" + this.p.direction);
@@ -149,8 +159,6 @@ window.addEventListener("load",function() {
        * correspondiente
        **/
       punch: function() {
-        console.log("punching")
-
           if(this.p.canTakeDamage) {
             this.p.isPunching = true;
             if(this.p.isCrouching) {
@@ -181,7 +189,7 @@ window.addEventListener("load",function() {
        */
       hit: function() {
         console.log(this);
-        if(this.p.canTakeDamage) {
+        if(this.p.canTakeDamage && !this.p.isPunching) {
           this.p.health--;
           this.p.canTakeDamage = false; //Para que no quite mucha vida de golpe, dejamos que termine la animacion para permitir recibir más daño
           if(this.p.health == 0) {
@@ -202,7 +210,7 @@ window.addEventListener("load",function() {
             else {
               //Animacion de hit cuando está de pié y saltando
               if(!this.p.isJumping) {
-                this.p.vy = -240;
+                this.p.vy = -240; //Efecto de hit: Salta un poco
               }
 
               this.p.sheet = "batmanHittedRunning";
