@@ -141,7 +141,7 @@ window.addEventListener("load",function() {
 
 
       /**
-       * Es function se llama cuando batman se agacha. Comprueba si es posible agacharse y 
+       * Esta function se llama cuando batman se agacha. Comprueba si es posible agacharse y 
        * si es asi, ejecuta la animacion
        */
       crouch: function() {
@@ -798,8 +798,8 @@ window.addEventListener("load",function() {
 
 
         var EnemyAnimations = {
-            walk: { frames: [0,1], rate: 1/3, loop: true },
-            dead: { frames: [2], rate: 1/10 }
+            walk: { frames: [0,1,2,3], rate: 1/12, loop: true },
+            dead: { frames: [0,1,2,3], rate: 1/10 }
         };
 
         Q.animations("goomba", EnemyAnimations);
@@ -813,7 +813,7 @@ window.addEventListener("load",function() {
 
     Q.scene("level1",function(stage) {
       Q.stageTMX("level1.tmx",stage);
-      Mario = stage.insert(new Q.Batman({x: 30,y: 420}));
+      Mario = stage.insert(new Q.Batman({x: 330,y: 1120}));
       console.log(Mario);
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
