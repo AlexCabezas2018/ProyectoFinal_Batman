@@ -1,4 +1,4 @@
 {
-	"goomba":{"sx":0,"sy":0,"tileW":55,"tileH":40,"frames":4},
-	"goombaDie":{"sx":0,"sy":42,"tileW":55,"tileH":40,"frames":4}
+	"goomba":{"sx":1,"sy":3,"tileW":50,"tileH":40,"frames":4},
+	"goombaDie":{"sx":201,"sy":3,"tileW":50,"tileH":40,"frames":4}
 }

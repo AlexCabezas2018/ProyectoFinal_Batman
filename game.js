@@ -80,6 +80,7 @@ window.addEventListener("load",function() {
           this.on("punchFinishedTrigger");
           this.on("allowToTakeDamageTrigger")
           this.on("enemy.hit", "hit");
+          this.on("bump.top","bumpTop"); 
 
           //Implementar las colisiones y los disparos.
       } ,
@@ -220,6 +221,13 @@ window.addEventListener("load",function() {
         }
       },
 
+      bumpTop: function(col) {
+          if(col.obj.isA("TileLayer")) {
+            if(col.tile == 24) { col.obj.setTile(col.tileX,col.tileY, 36); }
+            else if(col.tile == 36) { col.obj.setTile(col.tileX,col.tileY, 24); }
+          }
+        },
+
       /**
        * Esta funcion es llamada cuando ha terminado de golpear. Se actualiza el estado.
        */
@@ -355,7 +363,7 @@ window.addEventListener("load",function() {
         },
 
         die: function(col) {
-         if(col.obj.isA("Player")) {
+         if(col.obj.isA("Batman")) {
           this.entity.play('dead');
           this.entity.p.dead = true;
           col.obj.p.vy = -300;
@@ -364,7 +372,7 @@ window.addEventListener("load",function() {
       	},
 
       	killPlayer: function(col){
-      		if(col.obj.isA("Player") && !this.entity.p.dead) {
+      		if(col.obj.isA("Batman") && !this.entity.p.dead) {
           		col.obj.trigger('enemy.hit');
         	}
         }
@@ -373,34 +381,48 @@ window.addEventListener("load",function() {
 
     /*Goomba*/
     Q.Sprite.extend("Goomba",{
-        init: function(p) {
-          this._super(p, { sheet: 'goomba'});
-          this.add('defaultEnemy');
-          this.play('walk');
-        },
+      init: function(p) {
+        this._super(p, { sheet: 'goomba', vx: -100, rangeX: 200,
+          gravity: 0});
+        this.p.initialX = this.p.x;
+        this.add('defaultEnemy');
+        this.play('walkLeft');
 
-        step: function(dt) {
-          if(this.p.dead) {
-            this.del('2d, aiBounce');
-            this.p.deadTimer++;
-            if (this.p.deadTimer > 20) {          
-              this.destroy();
-            }
+      },
+
+      step: function(dt) {
+        if(this.p.dead) {
+          this.del('2d, aiBounce');
+          this.p.deadTimer++;
+          if (this.p.deadTimer > 30) { //menos tiempo porque si no puedes saltar 2 veces sobre el cadaver
+            this.destroy();
+          }
             return;
           }
 
-          this.p.vx = -40;
-          var p = this.p;
+          if(this.p.vx == 0){
+            this.p.vx = -100;
+          }
+          if(this.p.x <= this.p.initialX - this.p.rangeX) {   
+            this.p.vx = 100;
+          } 
+          else if(this.p.x >= this.p.initialX + this.p.rangeX) {   
+            this.p.vx = -100;
+            
+          } 
 
-          p.vx += p.ax * dt;
-          p.vy += p.ay * dt;
+          if(this.p.vx == 100){
+            this.play('walkRight');
+          }
+          else if(this.p.vx == -100){
+            this.play('walkLeft');
+          }
+          else{
+            this.play('walkLeft');
+          }
 
-          p.x += p.vx * dt;
-          p.y += p.vy * dt;
 
-          this.play('walk');
         }
-
     });
 
 
@@ -800,8 +822,9 @@ window.addEventListener("load",function() {
 
 
         var EnemyAnimations = {
-            walk: { frames: [0,1,2,3], rate: 1/8, loop: true },
-            dead: { frames: [2], rate: 1/10 }
+            walkLeft: { frames: [0,1,2,3], rate: 1/8, loop: true },
+            walkRight: { frames: [0,1,2,3], rate: 1/8, flip: "x", loop: true },
+            dead: { frames: [4,5,6,7], rate: 1/3 }
         };
 
         Q.animations("goomba", EnemyAnimations);
