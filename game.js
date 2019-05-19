@@ -878,313 +878,324 @@ window.addEventListener("load",function() {
       box.fit(20);
     });
 
-     /*********************STAGE 3**************************** */
+    /*********************STAGE 3**************************** */
     // si ha muerto joker
     var dieJoker = false;
-    //var chocaBatman = false;
-    //var Truenos = false;
-    var efec =  false;
 
-  Q.animations('Joker-animations', {
-    
-    truen_L:{ frames: [0,1], rate: 1, loop: false},
-    truen_R:{frames:[0,1], rate: 10, loop: false, flip:"x"},
-    fight_R:{ frames:[2,3,4,5,6], rate: 1/3, flip:"x"},
-    fight_L: { frames:[2,3,4,5,6], rate: 1/3},
-    rayos:{ frames: [0,1,2], rate:1/2.5, loop: false},
-    run_L:{ frames: [1,2,3,4,5,6], rate:1/3},//JOKERRUNNING
-    run_R:{ frames: [1,2,3,4,5,6], rate:1/3, flip:"x"},//JOKERRUNNING
-    die_L:{ frames:[0,1,2,3,4,5], rate:1, trigger: 'muerte', loop: false},//JokerDie
-    die_R:{ frames:[0,1,2,3,4,5], rate:1, flip:"x", trigger: 'muerte'},//JokerDie
-    stand_R:{ frames: [0], rate: 1/3, flip:"x"},
-    stand_L:{ frames: [0], rate: 1/3},
-    boomerang_R:{frames:[0,1,2,3,4], rate:1/3, flip:"x"},
-    boomerang_L:{frames:[0,1,2,3,4], rate:1/3},
-    shot_L:{frames:[0,1,2,3], rate:1/8, loop: true},
-    shot_R:{frames:[0,1,2,3], rate:1/8, flip:"x", loop: true}
-  });
-
-  //componente
-
-  Q.component('defecto', {
-
-    added: function() {
-    //this.entity.on("bump.top",this,"Joker");
-    this.entity.on("bump.left",this,"JokerRun");
-    this.entity.on("bump.right",this,"JokerRun");
-    },
-
-    JokerRun: function(col){
-      if(col.obj.isA("Batman")) {  //perdiendo vidas el joker
-        if(Q.inputs["fire"]){  
-          Q.state.dec("lives", 1);
-          if(Q.state.get("lives") < 0){
-            //this.entity.del("2d");
-            this.entity.muerte(); //Pierde osea muere
-            dieJoker = true;
-          }
-        }
-        else{
-          //si colisiona con batman que retroceda
-          //por ahora esta si llega a la esquina derecha
-          this.entity.retrocede();
-        }
-        
-      }
-      else{
-        //si no esta peleando debe morir batman
-        // se para y empieza a disparar o rayoS
-          this.entity.disparar();
-          this.entity.truen();
-          //this.entity.retrocede();
-          /*if(this.efec){
-          this.entity.stand();
-          }*/
-          //this.entity.truen();
-          //this.jokerAtaca();
-          //this.chocaBatman = true; //creo q este no hace falta
-      }
-    }
-   
-  });
-
-
-
-  Q.Sprite.extend("JokerBalas", { 
-    init: function(p) {
-       this._super(p, {
-         vx: -10,
-         sheet: 'JokerBalas',
-         sprite: 'Joker-animations',
-         frame: 0,
-         x:250, 
-         y:490,
-         gravity: 0,
-         });
-         this.p.initialY = this.p.y;
-         this.add('2d, aiBounce, animation');
-         this.play("shot_L");
-     },
-
-     step: function(dt){}
-
+    Q.animations('Joker-animations', {
+      
+      truen_left:{ frames: [0,1], rate: 1, loop: false},
+      truen_right:{frames:[0,1], rate: 1, loop: false, flip:"x"},
+      fight_right:{ frames:[2,3,4,5,6], rate: 1/3, flip:"x"},
+      fight_left: { frames:[2,3,4,5,6], rate: 1/3},
+      rayos:{ frames: [0,1,2], rate:1/2.5, loop: false},
+      run_left:{ frames: [1,2,3,4,5,6], rate:1/5, flip: false, loop: true},//JOKERRUNNING
+      run_right:{ frames: [1,2,3,4,5,6], rate:1/5, flip:"x", loop: true},//JOKERRUNNING
+      die_left:{ frames:[0,1,2,3,4,5], rate:1, trigger: 'muerte', loop: false},//JokerDie
+      die_right:{ frames:[0,1,2,3,4,5], rate:1, flip:"x", trigger: 'muerte', loop: false},//JokerDie
+      stand_right:{ frames: [0], rate: 1/3, flip:"x"},
+      stand_left:{ frames: [0], rate: 1/3},
+      boomerang_right:{frames:[0,1,2,3,4], rate:1/3, flip:"x"},
+      boomerang_left:{frames:[0,1,2,3,4], rate:1/3},
+      shot_left:{frames:[0,1,2,3], rate:1/8, loop: true},
+      shot_right:{frames:[0,1,2,3], rate:1/8, flip:"x", loop: true}
     });
 
-  /*Q.Sprite.extend("JokerBoomerang", { 
-    init: function(p) {
-       this._super(p, {
-         vx: -10, 
-         sheet: 'JokerBoomerang',
-         sprite: 'Joker-animations',
-         frame: 0,
-         x:250, 
-         y:490,
-         gravity: 0,
-         });
-         this.add('2d, aiBounce, animation');
-         this.play("boomerang_L");
-     },
-     step: function(dt){}
-    });
-    */
-    //en este***abajo
-    
-    Q.Sprite.extend("JokerRunning", { 
+
+/*
+    Q.Sprite.extend("JokerBalas", { 
       init: function(p) {
          this._super(p, {
-           vx: -100, 
-           sheet: 'JokerRunning',
+           vx: -10,
+           sheet: 'JokerBalas',
            sprite: 'Joker-animations',
-           //frame: 0,
-           x:400, 
-           y:476,
+           frame: 0,
+           x:250, 
+           y:490,
            gravity: 0,
-           lifesJoker : 5,
-           auxleft: 0, 
-           auxRight: 0,
-           truenos: false,
-           efectos: false,
-           d : 1,//HACIA LA IZQUIERDA
            });
-           this.add('2d, aiBounce, animation, defecto');
-           this.play("run_L");
-           //this.on("ataqueFinal");
-           //this.add("defecto");
-          //this.play("run_L"); //EMPIEZA HACIA LA IZQUIERDA
-          this.on("bump.left",this,"turnRight");
-          this.on("bump.right",this,"turnLeft");
-           //this.play("stand_L");
+           this.p.initialY = this.p.y;
+           this.add('2d, aiBounce, animation');
+           this.play("shot_L");
+       },
+
+       step: function(dt){}
+
+      });*/
+
+    /*Q.Sprite.extend("JokerBoomerang", { 
+      init: function(p) {
+         this._super(p, {
+           vx: -10, 
+           sheet: 'JokerBoomerang',
+           sprite: 'Joker-animations',
+           frame: 0,
+           x:250, 
+           y:490,
+           gravity: 0,
+           });
+           this.add('2d, aiBounce, animation');
+           this.play("boomerang_L");
+       },
+       step: function(dt){}
+      });
+      */
+      //en este***abajo
+      
+      Q.component('efectted', {
+
+      added: function() {
+      this.entity.on("bump.left",this,"colIzq");
+      this.entity.on("bump.right",this,"colDer");
+      },
+
+      colIzq: function(col){
+        if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
+          if(Q.inputs["fire"]){  
+            Q.state.dec("lives", 1);
+            if(Q.state.get("lives") < 0){
+              //this.entity.del("2d");
+              this.entity.muerte(); //Pierde osea muere
+              dieJoker = true;
+            }
+          }
+          //else{
+            if(!dieJoker){
+          this.entity.turnRight();
+            }
+          //}
+        }else{
+          this.entity.disparar();
+          this.entity.truen();
+        }
+          
+      },
+
+      colDer: function(col){
+        if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
+          if(Q.inputs["fire"]){  
+            Q.state.dec("lives", 1);
+            if(Q.state.get("lives") < 0){
+              //this.entity.del("2d");
+              this.entity.muerte(); //Pierde osea muere
+              dieJoker = true;
+            }
+          }
+          //else{
+            if(!dieJoker){
+          this.entity.turnLeft();
+            }
+          //}
+        }else{
+          this.entity.disparar();
+          this.entity.truen();
+        }
+          
+      }
+     
+    });
+
+      Q.Sprite.extend("JokerRunning", { 
+        init: function(p) {
+           this._super(p, {
+             vx: -100, 
+             sheet: 'JokerRunning',
+             sprite: 'Joker-animations',
+             frame: 1,
+             x:400, 
+             y:476,
+             gravity: 0,
+             lifesJoker : 5,
+             truenos: false,
+             esquinaDer : false,
+             esquinaIzq : false,
+             direcionDer : false, //indica si esta llendo a la dercha(false) izquierda true
+             });
+            this.add('2d, aiBounce, animation, efectted');
+            this.play("run_left"); //EMPIEZA HACIA LA IZQUIERDA
+            //this.play("run_right");
+            //this.on("bump.left",this,"turnRight");
+            //this.on("bump.right",this,"turnLeft");
+         },
+         step: function(dt){
+
+            if(!dieJoker){
+              
+                if(this.p.x >= 460) { //final de escena 460
+                    //this.p.vx = 0;
+                    this.esquinaDer = true;
+                }
+           
+                if(this.p.x <= 84) {  //aqui es limite 84
+                    //this.p.vx = 0;
+                    this.esquinaIzq = true;
+                }
+            
+          }
+          else{
+            /*time += dt;
+            if(time >= 2) {
+                  this.destroy();
+                  Q.clearStages();
+                  Q.stageScene('mainMenu'); // ir a otra pantalla
+            }*/
+          }
+
+         },
+        
+       /* retrocede: function(){
+          if(this.p.x >= 400 && !dieJoker){  //llega al extremo de la esquina
+            //this.p.x += 30;
+            this.play("stand_L", 1);
+          }
+          
+        },*/
+
+        disparar: function(dt){
+          this.p.vx = 0;
+          this.p.y = 413; //nueva posicion
+          this.p.sheet = "JokerA";
+          if(this.p.direcionDer)
+          {
+            this.play("truen_left", 1);
+          }else{
+          this.play("truen_right", 1);
+          }
+          this.p.truenos = true;
+         },
+
+         truen: function(dt){
+          //this.p.vx = 0;
+          if(this.p.truenos){
+            this.p.truenos = false;
+            this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
+            this.stage.insert(new Q.JokerRayos({x: 265}));
+            this.stage.insert(new Q.JokerRayos({x: 350}));
+           
+          }
+          else{
+            //no hacemos nada
+          }
+        },
+
+         muerte: function(){
+          this.p.sheet = "JokerDie";
+          this.p.y = 476;
+          this.p.vx = 0;
+          if(this.p.direcionDer)
+          {
+          this.play("die_left", 1);
+          }else{
+            this.play("die_right", 1);
+          }
+          
+         },
+
+         turnRight: function() {
+          this.p.y = 436;
+          this.p.sheet = "JokerRunning";
+          if(this.esquinaDer){
+            this.p.vx = -100;
+            this.p.direcionDer = false;
+            this.play("run_left",1);
+          }
+          else{
+            this.p.vx = 100;
+          this.p.direcionDer = true;
+          this.play("run_right",1);
+          }
+        },
+        
+        turnLeft: function() {
+          this.p.y = 436;
+          this.p.sheet = "JokerRunning";
+          if(this.esquinaIzq){
+            this.p.vx = 100;
+            this.p.direcionDer = true;
+            this.play("run_right",1);
+          }
+          else{
+            this.p.vx = -100;
+            this.p.direcionDer = false;
+          this.play("run_left",1);
+          }
+        },
+
+
+        });  
+
+      
+
+    Q.Sprite.extend("JokerRayos", {  
+      init: function(p) {
+         this._super(p, {
+           vx: 0, 
+           sheet: 'JokerRayos',
+           sprite: 'Joker-animations',
+           vy:-10,
+           frame: 0,
+           gravity: 0.9,
+           x: 180,
+           y: 0,
+           ax: 0,
+           ay:150,
+           });
+           this.add('2d, aiBounce, animation');
+           this.play("rayos", 1);
        },
        step: function(dt){
-
-        /*if(efec && !this.p.truenos){
-          this.play("stand_L");
-        }*/
-          if(!dieJoker){
-            if(this.p.auxRight != 0){
-              if(this.p.x > this.p.auxRight) {
-                  this.p.vx = 100;
-                  this.play("run_L");
-              }
-          }
-          if(this.p.auxLeft != 0) {
-              if(this.p.x < this.p.auxLeft) {
-                  this.p.vx = -100;
-                  this.play("run_R");
-              }
-          }
-        }
-        else{
-          time += dt;
-          if(time >= 2) {
-                this.destroy();
-                Q.clearStages();
-                Q.stageScene('mainMenu'); // ir a otra pantalla
-          }
-        }
-
-       },
-      
-      retrocede: function(){
-        if(this.p.x >= 400 && !dieJoker){  //llega al extremo de la esquina
-          //this.p.x += 30;
-          this.play("stand_L", 1);
-        }
+         var t = 0;
         
-      },
+          if(this.p.y >= 403){  //pero es 398
+               this.destroy();
+          }
 
-      stand: function(){
-        this.p.vx = 0;
-        if(efec){  //si hubo efectos
-          efec = false;
-        this.play("stand_R", 1);
         }
-      },
 
-      disparar: function(dt){
-        time+=dt;
-        this.p.vx = 0;
-        this.p.y = 413; //nueva posicion
-        this.p.sheet = "JokerA";
-        this.play("truen_L", 1);
-        this.p.truenos = true;
+      });
+
+    /*Q.Sprite.extend("Joker", {
+      init: function(p) {
+         this._super(p, {
+           sheet: 'JokerA',
+           sprite: 'Joker-animations',
+           });
+           this.add('2d, aiBounce, animation');
+           this.play("manda_L");
        },
-
-       truen: function(dt){
-        this.p.vx = 0;
-        if(this.p.truenos){
-          this.p.truenos = false;
-          this.stage.insert(new Q.JokerRayos());
-          this.stage.insert(new Q.JokerRayos({x: 270}));
-          //this.efec = true;
-          /*var time = 0;
-          time += dt;
-          if(time > 1){
-          this.p.efectos = true;
-          }*/
-          //this.p.efectos = true;
-        }
-        else{
-          //no hacemos nada
-          //t.destroy();
-        }
-        //this.play("rayos", 1);
-      },
-
-       muerte: function(){
-         //se sube la posicion pero ya esta modificado
-        this.p.sheet = "JokerDie";
-        this.p.y = 476;
-        this.p.vx = 0;
-        this.play("die_L", 1);
-       },
-
-       turnRight: function() {//cambiar de direccion sprites
-        this.play("run_R");
-      },
-      
-      turnLeft: function() {
-        this.play("run_L");
-      },
-
-
-      });  
-
-    
-
-  Q.Sprite.extend("JokerRayos", {  
-    init: function(p) {
-       this._super(p, {
-         vx: 0, 
-         sheet: 'JokerRayos',
-         sprite: 'Joker-animations',
-         vy:-10,
-         frame: 0,
-         //rangeY:90,
-         gravity: 0.9,
-         x: 150,
-         y: 0,
-         ax: 0,
-         ay:150,
-         });
-         //this.p.initialY = this.p.y;
-         this.add('2d, aiBounce, animation');
-         this.play("rayos", 1);
-     },
-     step: function(dt){
-       var t = 0;
        
-        //this.p.y += 10;
-        if(this.p.y >= 403){  //pero es 398
-             this.destroy();
+       step: function(dt){
+        time += dt;
+        if(time >= 10) {
+          //presentamos al joker de pie
+          this.destroy();
         }
+       },
 
-      }
+      });
+      */
+    /*Mejorar las dimensiones de sheet*/
+      
 
+    Q.scene("level3",function(stage) {
+      Q.state.reset({score: 0, lives: 5});
+      Q.stageTMX("level3.tmx",stage);
+      Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
+      stage.add("viewport").follow(Batman,{x:false, y:false});
+     // stage.centerOn(250,400);
+      stage.unfollow(); 
+      //stage.insert(new Q.Joker({x:400, y:446}));
+      stage.insert(new Q.JokerRunning());
+      //stage.insert(new Q.JokerRayos({x:130, y:10}));
+      
+      //para probar los rayos
+      
+      //stage.insert(new Q.JokerRayos({x:130, y:10}));
+      //stage.insert(new Q.JokerRayos({x:200, y:10}));
+      //stage.insert(new Q.JokerBoomerang());
+      //stage.insert(new Q.JokerBalas());
+      //musica del nivel de joker
+     //Q.audio.play("music_joker.mp3", {loop: true});
     });
-
-  /*Q.Sprite.extend("Joker", {
-    init: function(p) {
-       this._super(p, {
-         sheet: 'JokerA',
-         sprite: 'Joker-animations',
-         });
-         this.add('2d, aiBounce, animation');
-         this.play("manda_L");
-     },
-     
-     step: function(dt){
-      time += dt;
-      if(time >= 10) {
-        //presentamos al joker de pie
-        this.destroy();
-      }
-     },
-
-    });
-    */
-  /*Mejorar las dimensiones de sheet*/
-    
-
-  Q.scene("level3",function(stage) {
-    Q.state.reset({score: 0, lives: 3});
-    Q.stageTMX("level3.tmx",stage);
-    Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
-    stage.add("viewport").follow(Batman,{x:false, y:false});
-   // stage.centerOn(250,400);
-    stage.unfollow(); 
-    //stage.insert(new Q.Joker({x:400, y:446}));
-    stage.insert(new Q.JokerRunning());
-    //stage.insert(new Q.JokerRayos({x:130, y:10}));
-    
-    //para probar los rayos
-    
-    //stage.insert(new Q.JokerRayos({x:130, y:10}));
-    //stage.insert(new Q.JokerRayos({x:200, y:10}));
-    //stage.insert(new Q.JokerBoomerang());
-    //stage.insert(new Q.JokerBalas());
-    //musica del nivel de joker
-   //Q.audio.play("music_joker.mp3", {loop: true});
-  });
-  /*************fin del level3*********** */
+    /*************fin del level3*********** */
 });
