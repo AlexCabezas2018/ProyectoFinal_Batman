@@ -895,52 +895,82 @@ window.addEventListener("load",function() {
       die_right:{ frames:[0,1,2,3,4,5], rate:1, flip:"x", trigger: 'muerte', loop: false},//JokerDie
       stand_right:{ frames: [0], rate: 1/3, flip:"x"},
       stand_left:{ frames: [0], rate: 1/3},
-      boomerang_right:{frames:[0,1,2,3,4], rate:1/3, flip:"x"},
-      boomerang_left:{frames:[0,1,2,3,4], rate:1/3},
-      shot_left:{frames:[0,1,2,3], rate:1/8, loop: true},
-      shot_right:{frames:[0,1,2,3], rate:1/8, flip:"x", loop: true}
+      boomerang_right:{frames:[0,1,2,3,4], rate:1/3, flip:"x"}, //JokerBoomerang
+      boomerang_left:{frames:[0,1,2,3,4], rate:1/3},  //JokerBoomerang
+      shot_left:{frames:[0,1,2,3], rate:1/3},//JokerBalas
+      shot_right:{frames:[0,1,2,3], rate:1/3, flip:"x"}  //JokerBalas
     });
 
+    Q.component('toca', {
 
-/*
+      added: function() {
+      this.entity.on("bump.left",this,"colObjeto");
+      this.entity.on("bump.right",this,"colObjeto");
+      this.entity.on("bump.bottom",this,"colObjeto"); //paraRayos
+      },
+
+      colObjeto: function(col){
+        if(col.obj.isA("Batman")) {  //colisiona con Batman
+          this.entity.destroy();
+        }
+      } 
+    });
+
     Q.Sprite.extend("JokerBalas", { 
       init: function(p) {
          this._super(p, {
-           vx: -10,
+           //vx: 100,
            sheet: 'JokerBalas',
            sprite: 'Joker-animations',
            frame: 0,
-           x:250, 
-           y:490,
+           //x:380, //para disparar desde la esquina derecha
+           y:430,
+           dirDer: false,
            gravity: 0,
+           
            });
-           this.p.initialY = this.p.y;
-           this.add('2d, aiBounce, animation');
-           this.play("shot_L");
+           this.add('2d, aiBounce, animation, toca');
        },
 
-       step: function(dt){}
+       step: function(dt){
 
-      });*/
+          if(!this.p.dirDer){
+            this.p.vx = -100;
+            this.play("shot_left", 1);
+          }
+          if(this.p.dirDer){
+            this.p.vx = 100;
+            this.play("shot_right", 1);
+          }
+       }
 
-    /*Q.Sprite.extend("JokerBoomerang", { 
+      });
+
+    Q.Sprite.extend("JokerBoomerang", { 
       init: function(p) {
          this._super(p, {
-           vx: -10, 
+           //vx: -10, 
            sheet: 'JokerBoomerang',
            sprite: 'Joker-animations',
            frame: 0,
-           x:250, 
-           y:490,
+           //x:250, 
+           y:430,
            gravity: 0,
            });
-           this.add('2d, aiBounce, animation');
-           this.play("boomerang_L");
+           this.add('2d, aiBounce, animation, toca');
        },
-       step: function(dt){}
+       step: function(dt){
+        if(!this.p.dirDer){
+          this.p.vx = -100;
+          this.play("boomerang_left", 1);
+        }
+        if(this.p.dirDer){
+          this.p.vx = 100;
+          this.play("boomerang_right", 1);
+        }
+       }
       });
-      */
-      //en este***abajo
+      
       
       Q.component('efectted', {
 
@@ -1068,16 +1098,20 @@ window.addEventListener("load",function() {
           //this.p.vx = 0;
           if(this.p.truenos){
             this.p.truenos = false;
-            this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
-            this.stage.insert(new Q.JokerRayos({x: 265}));
-            this.stage.insert(new Q.JokerRayos({x: 350}));
-           
+            //this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
+            //this.stage.insert(new Q.JokerRayos({x: 265}));
+            //this.stage.insert(new Q.JokerRayos({x: 350}));
+            if(this.p.direcionDer){
+              this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerRayos
+            }else{
+              this.stage.insert(new Q.JokerBoomerang({x: 164, dirDer: true}));  //JokerRayos con x : 154 y JokerBoo con 164
+            }
           }
           else{
             //no hacemos nada
           }
         },
-
+        
          muerte: function(){
           this.p.sheet = "JokerDie";
           this.p.y = 476;
@@ -1140,7 +1174,7 @@ window.addEventListener("load",function() {
            ax: 0,
            ay:150,
            });
-           this.add('2d, aiBounce, animation');
+           this.add('2d, aiBounce, animation, toca');
            this.play("rayos", 1);
        },
        step: function(dt){
