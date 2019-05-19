@@ -137,6 +137,9 @@ window.addEventListener("load",function() {
           this.p.sheet = "batmanJump";
           this.p.isJumping = true;
           this.play('jump_' + this.p.direction, 1);
+
+          //Reproducir audio de salto
+          Q.audio.play("batman_jump.mp3");
         }
       },
 
@@ -180,6 +183,9 @@ window.addEventListener("load",function() {
               this.p.sheet = "batmanPunch";
               this.play("punch_" + this.p.direction, 1);
             }
+
+            //Reproducir audio de puñetazo
+            Q.audio.play("batman_punch.mp3");
         }
       },
 
@@ -189,7 +195,6 @@ window.addEventListener("load",function() {
        * Despues se analiza su estado y se ejecuta la animación correspondiente.
        */
       hit: function() {
-        console.log(this);
         if(this.p.canTakeDamage && !this.p.isPunching) {
           this.p.health--;
           this.p.canTakeDamage = false; //Para que no quite mucha vida de golpe, dejamos que termine la animacion para permitir recibir más daño
@@ -201,8 +206,12 @@ window.addEventListener("load",function() {
             this.p.vx = 0;
             this.play('die_' + this.p.direction);
             this.del('2d'); //Eliminamos ese componente para que batman no responda a controles ni a fisicas.1
+            Q.audio.stop(); //Se para toda la musica para solo oir la muerte de batman
+            Q.audio.play("batman_death.mp3"); //Reproduce audio de muerte.
           }
           else {
+            //Reproducir audio de hit
+            Q.audio.play("batman_hit.mp3");
             if(this.p.isCrouching) {
               //Animacion de hit cuando está agachado
               this.p.sheet = "batmanHittedCrouched";
@@ -210,10 +219,9 @@ window.addEventListener("load",function() {
             }
             else {
               //Animacion de hit cuando está de pié y saltando
-              if(!this.p.isJumping) {
+              if(!this.p.isJumping || this.p.vx != 0) {
                 this.p.vy = -240; //Efecto de hit: Salta un poco
               }
-
               this.p.sheet = "batmanHittedRunning";
               this.play("hitted_running_" + this.p.direction, 1);
             }
@@ -780,19 +788,19 @@ window.addEventListener("load",function() {
    Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
     "bloopa.json, bloopa.png,acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
-    "coin.json, coin.png, batman.png, batman.json", function() {
+    "coin.json, coin.png, batman.png, batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3",  function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
         Q.compileSheets("bloopa.png","bloopa.json");
         Q.compileSheets("tiles.png","tiles.json");
         Q.compileSheets("batman.png", "batman.json")
         Q.compileSheets("coin.png","coin.json");
-         Q.compileSheets("cintainferior.png","cintainferior.json");
+        Q.compileSheets("cintainferior.png","cintainferior.json");
         Q.compileSheets("cintaSup.png","cintaSup.json");
         Q.compileSheets("barraElect.png","barraElect.json");
         Q.compileSheets("ia.png","ia.json");
         Q.compileSheets("ia2.png","ia2.json");
-         Q.compileSheets("cuchillas.png","cuchillas.json");
+        Q.compileSheets("cuchillas.png","cuchillas.json");
         Q.compileSheets("cuchillas2.png","cuchillas2.json");
         Q.compileSheets("cuchillas3.png","cuchillas3.json");
         Q.compileSheets("acc1.png","acc1.json");
