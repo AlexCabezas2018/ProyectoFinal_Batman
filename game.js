@@ -892,10 +892,10 @@ window.addEventListener("load",function() {
 
     Q.animations('Joker-animations', {
       
-      truen_left:{ frames: [0,1], rate: 1, loop: false},
-      truen_right:{frames:[0,1], rate: 1, loop: false, flip:"x"},
-      fight_right:{ frames:[2,3,4,5,6], rate: 1/3, flip:"x"},
-      fight_left: { frames:[2,3,4,5,6], rate: 1/3},
+      truen_left:{ frames: [0,1], rate: 1/3, loop: false},
+      truen_right:{frames:[0,1], rate: 1/3, loop: false, flip:"x"},
+      fight_right:{ frames:[2,3,4,5,6], rate: 1/3, loop: false, flip:"x"},
+      fight_left: { frames:[2,3,4,5,6], rate: 1/3, loop: false},
       rayos:{ frames: [0,1,2], rate:1/2.5, loop: false},
       run_left:{ frames: [1,2,3,4,5,6], rate:1/5, flip: false, loop: true},//JOKERRUNNING
       run_right:{ frames: [1,2,3,4,5,6], rate:1/5, flip:"x", loop: true},//JOKERRUNNING
@@ -1003,7 +1003,7 @@ window.addEventListener("load",function() {
             }
           //}
         }else{
-          this.entity.disparar();
+          this.entity.disparar(); //o lanzar rayos (depende la posicion)
           this.entity.truen();
         }
           
@@ -1025,7 +1025,7 @@ window.addEventListener("load",function() {
             }
           //}
         }else{
-          this.entity.disparar();
+          this.entity.disparar(); //o lanzar rayos (depende la posicion)
           this.entity.truen();
         }
           
@@ -1088,8 +1088,21 @@ window.addEventListener("load",function() {
           }
           
         },*/
+        
+        disparar: function(dt){ //para fuego y boomerang
+          this.p.vx = 0;
+          this.p.y = 413; //nueva posicion
+          this.p.sheet = "JokerA";
+          if(this.p.direcionDer)
+          {
+            this.play("fight_left", 1);
+          }else{
+          this.play("fight_right", 1);
+          }
+          this.p.truenos = true;
+         },
 
-        disparar: function(dt){
+        lanzar: function(dt){ //solo para rayos
           this.p.vx = 0;
           this.p.y = 413; //nueva posicion
           this.p.sheet = "JokerA";
@@ -1100,20 +1113,45 @@ window.addEventListener("load",function() {
           this.play("truen_right", 1);
           }
           this.p.truenos = true;
+          
          },
 
          truen: function(dt){
           //this.p.vx = 0;
           if(this.p.truenos){
             this.p.truenos = false;
+
+            var yee = Math.random();
+            if(yee < 0.3) {
+              this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
+              this.stage.insert(new Q.JokerRayos({x: 265}));
+              this.stage.insert(new Q.JokerRayos({x: 350}));
+            }
+            else{
+              if(yee < 0.6){
+                if(this.p.direcionDer){
+                  this.stage.insert(new Q.JokerBalas({x:380, dirDer: false}));  //JokerBalas
+                }else{
+                  this.stage.insert(new Q.JokerBalas({x: 154, dirDer: true}));  //JokerBalas con x : 154 y JokerBoo con 164
+                }
+              }
+              else{
+                if(this.p.direcionDer){
+                  this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerBalas
+                }else{
+                  this.stage.insert(new Q.JokerBoomerang({x: 164, dirDer: true}));  //JokerBalas con x : 154 y JokerBoo con 164
+                }
+              }
+            }
+              
             //this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
             //this.stage.insert(new Q.JokerRayos({x: 265}));
             //this.stage.insert(new Q.JokerRayos({x: 350}));
-            if(this.p.direcionDer){
-              this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerRayos
+            /*if(this.p.direcionDer){
+              this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerBalas
             }else{
-              this.stage.insert(new Q.JokerBoomerang({x: 164, dirDer: true}));  //JokerRayos con x : 154 y JokerBoo con 164
-            }
+              this.stage.insert(new Q.JokerBoomerang({x: 164, dirDer: true}));  //JokerBalas con x : 154 y JokerBoo con 164
+            }*/
           }
           else{
             //no hacemos nada
@@ -1220,7 +1258,7 @@ window.addEventListener("load",function() {
       
 
     Q.scene("level3",function(stage) {
-      Q.state.reset({score: 0, lives: 5});
+      Q.state.reset({score: 0, lives: 5});  //mejorara lo de las vidas
       Q.stageTMX("level3.tmx",stage);
       Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
       stage.add("viewport").follow(Batman,{x:false, y:false});
@@ -1228,16 +1266,9 @@ window.addEventListener("load",function() {
       stage.unfollow(); 
       //stage.insert(new Q.Joker({x:400, y:446}));
       stage.insert(new Q.JokerRunning());
-      //stage.insert(new Q.JokerRayos({x:130, y:10}));
       
-      //para probar los rayos
-      
-      //stage.insert(new Q.JokerRayos({x:130, y:10}));
-      //stage.insert(new Q.JokerRayos({x:200, y:10}));
-      //stage.insert(new Q.JokerBoomerang());
-      //stage.insert(new Q.JokerBalas());
       //musica del nivel de joker
-     //Q.audio.play("music_joker.mp3", {loop: true});
+     Q.audio.play("music_joker.mp3", {loop: true}); //controlar cuando muere
     });
     /*************fin del level3*********** */
 });
