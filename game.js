@@ -43,11 +43,14 @@ window.addEventListener("load",function() {
       pistol_jumping_right: {},
       pistol_jumping_left: {},
 
-      boomerang_running_right: {},
-      boomerang_running_left: {},
-      boomerang_crouched_right: {},
-      boomerang_jumping_right: {},
-      boomerang_jumping_left: {}
+      boomerang: { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], rate: 1/10, flip: false, loop: false},
+
+      boomerang_running_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_running_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_crouched_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_crouched_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_jumping_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_jumping_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' }
 
       //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
     });
@@ -77,6 +80,7 @@ window.addEventListener("load",function() {
           });
           this.add('2d, platformerControls, animation');
           Q.input.on("fire", this, "punch");
+          Q.input.on("S", this, "boomerang");
           this.on("punchFinishedTrigger");
           this.on("allowToTakeDamageTrigger")
           this.on("enemy.hit", "hit");
@@ -189,6 +193,38 @@ window.addEventListener("load",function() {
         }
       },
 
+      boomerang: function() {
+          if(this.p.canTakeDamage) {
+            this.p.isPunching = true;
+            if(this.p.isCrouching) {
+              //Animaciones cuando batman lanza boomerang agachado
+              this.p.vx = 0;
+              this.p.sheet = "batmanBoomerangCrouched";
+              this.play("boomerang_crouched_" + this.p.direction, 1);
+              //Q.stage().insert(new Q.BatmanBoomerang({x: this.p.x + 20, y: this.p.y}));
+              Q.stage().insert(new Q.BatmanBoomerang({x:this.p.x ,  dirDer: true}));
+
+            }
+            else if(this.p.isJumping){
+              //Animaciones cuando batman lanza boomerang saltando
+              this.p.sheet = "batmanBoomerangJumping";
+              this.play("boomerang_jumping_" + this.p.direction, 1);
+              Q.stage().insert(new Q.BatmanBoomerang({x:this.p.x ,   dirDer: true}));
+            }
+            else {
+              //Animaciones cuando batman lanza boomerang de pie
+              this.p.vx = 0;
+              this.p.sheet = "batmanBoomerangRunning";
+              this.play("boomerang_running_" + this.p.direction, 1);
+              Q.stage().insert(new Q.BatmanBoomerang({x:this.p.x ,  dirDer: true}));;
+
+            }
+
+            //Reproducir audio de puñetazo
+            Q.audio.play("batman_punch.mp3");
+        }
+      },
+
 
       /**
        * Esta función es llamada cuando es golpeado. Se calcula si ha muerto o si se ha hitteado.
@@ -229,6 +265,7 @@ window.addEventListener("load",function() {
         }
       },
 
+
       bumpTop: function(col) {
           if(col.obj.isA("TileLayer")) {
             if(col.tile == 24) { col.obj.setTile(col.tileX,col.tileY, 36); }
@@ -250,6 +287,29 @@ window.addEventListener("load",function() {
         this.p.staticAnim = true;
       }
   });
+
+    Q.Sprite.extend("BatmanBoomerang", { 
+      init: function(p) {
+         this._super(p, {
+           //vx: -10, 
+           sheet: 'batmanBoomerang',
+           sprite: 'batman_anims',
+           frame: 0,
+           gravity: 0,
+           });
+           this.add('2d, aiBounce, animation, toca');
+       },
+       step: function(dt){
+        if(!this.p.dirDer){
+          this.p.vx = -100;
+          this.play("boomerang", 1);
+        }
+        if(this.p.dirDer){
+          this.p.vx = 100;
+          this.play("boomerang", 1);
+        }
+       }
+      });
 
 
 
@@ -364,17 +424,16 @@ window.addEventListener("load",function() {
 
         added: function() {
         this.entity.add("2d, aiBounce, animation");
-    	  this.entity.on("bump.top",this,"die");
+    	  this.entity.on("bump.top",this,"killPlayer");
     	  this.entity.on("bump.left", this, "killPlayer");
     	  this.entity.on("bump.right", this, "killPlayer");
-    	  this.entity.on("hit.sprite",this,"killPlayer");
+    	  this.entity.on("hit.sprite",this,"die");
         },
 
         die: function(col) {
          if(col.obj.isA("Batman")) {
           this.entity.play('dead');
           this.entity.p.dead = true;
-          col.obj.p.vy = -300;
           this.entity.p.deadTimer = 0;
          }
       	},
@@ -429,9 +488,8 @@ window.addEventListener("load",function() {
             this.play('walkLeft');
           }
 
-
-        }
-    });
+        },
+  });
 
 
     /*Bloopa*/

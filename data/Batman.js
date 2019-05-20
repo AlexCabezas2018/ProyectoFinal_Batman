@@ -20,7 +20,14 @@
         punch_left: { frames: [0, 1, 2, 3], rate: 1/15, flip: "x" },
         punch_right: { frames: [0, 1, 2, 3], rate: 1/15, flip: false },
         bounce_left: { frames: [0, 1, 2], rate: 1/15, flip: false },
-        bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" }
+        bounce_right: { frames: [0, 1, 2], rate: 1/15, flip: "x" },
+		boomerang_running_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false},
+        boomerang_running_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false},
+        boomerang_crouched_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false},
+        boomerang_crouched_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false},
+        boomerang_jumping_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false},
+        boomerang_jumping_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false}
+
 
         //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
     });

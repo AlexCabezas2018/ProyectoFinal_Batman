@@ -1,5 +1,7 @@
 {
-    "batmanStatic": { "sx":-1, "sy":4,"tilew":30 ,"tileh":32, "frames": 4 },
+    
+	"batmanBoomerang": { "sx":207, "sy":93,"tilew":10 ,"tileh":10, "frames": 10 },
+	"batmanStatic": { "sx":-1, "sy":4,"tilew":30 ,"tileh":32, "frames": 4 },
     "batmanRunning": { "sx":1, "sy":40,"tilew":28 ,"tileh":33, "frames": 6 } , 
     "batmanJump": { "sx":3, "sy":75,"tilew":28 ,"tileh":31, "frames": 5 },
     "crouch": { "sx":117, "sy":4,"tilew":30 ,"tileh":32, "frames": 1 }, 
@@ -12,7 +14,7 @@
     "batmanPistolRunning": {},
     "batmanPistolCrouched": {},
     "batmanPistolJumping": {},
-    "batmanBoomerangRunning": {},
-    "batmanBoomerangCrouched": {},
-    "batmanBoomerangJumping": {}
+    "batmanBoomerangRunning": { "sx":136, "sy":214,"tilew":32 ,"tileh":33, "frames": 3 },
+    "batmanBoomerangCrouched": { "sx":136, "sy":265,"tilew":32 ,"tileh":24, "frames": 3 },
+    "batmanBoomerangJumping": { "sx":136, "sy":291,"tilew":32 ,"tileh":33, "frames": 3 }
 }
