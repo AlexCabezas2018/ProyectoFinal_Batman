@@ -1,0 +1,4 @@
+{
+	"front":{"sx":25,"sy":10,"tileW":120,"tileH":100,"frames":1},
+	"move":{"sx":157,"sy":10,"tileW":120,"tileH":100,"frames":1}
+}
