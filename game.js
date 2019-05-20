@@ -85,6 +85,7 @@ window.addEventListener("load",function() {
           this.on("allowToTakeDamageTrigger")
           this.on("enemy.hit", "hit");
           this.on("bump.top","bumpTop"); 
+          this.on("stage1completed","gotoStage2"); 
 
           //Implementar las colisiones y los disparos.
       } ,
@@ -264,6 +265,10 @@ window.addEventListener("load",function() {
           }
         }
       },
+
+      gotoStage2: function(){
+          Q.stageScene("gotoStage2",1, { label: "GOOD JOB" });
+        },
 
 
       bumpTop: function(col) {
@@ -533,20 +538,17 @@ window.addEventListener("load",function() {
       init: function(p,defaults) {
     	    this._super(p,Q._defaults(defaults||{},{
     	      collisionMask: Q.SPRITE_ALL,
-    	      win: false
     	    }));
 
     	    this.add("2d");
-    	    this.on("bump.top",this,"MarioWins");
-    	    this.on("bump.left","MarioWins");
-    	    this.on("bump.right","MarioWins");
-    	    this.on("bump.bottom","MarioWins");
+    	    this.on("bump.top",this,"gotoStage2");
+    	    this.on("bump.left","gotoStage2");
+    	    this.on("bump.right","gotoStage2");
+    	    this.on("bump.bottom","gotoStage2");
       	},
-      MarioWins: function(col){
-    	if(col.obj.isA("Player") && !this.p.win) {
-          col.obj.trigger('win');
-          this.p.win = true;
-          this.p.collisionMask = Q.SPRITE_NONE;
+      gotoStage2: function(col){
+    	if(col.obj.isA("Batman")) {
+          col.obj.trigger('stage1completed');
         }
       },
     });
@@ -928,18 +930,18 @@ window.addEventListener("load",function() {
      
     });
 
-    Q.scene('endGame',function(stage) {
+    Q.scene('gotoStage2',function(stage) {
       var box = stage.insert(new Q.UI.Container({
-        x: 30, y: 30, fill: "rgba(0,0,0,0.5)"
+        x: 30, y: 30, fill: "rgba(41,0,29,0.8)"
       }));
       
-      var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
-                                               label: "Play Again" }))         
-      var label = box.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
+      var button = box.insert(new Q.UI.Button({ x: 250, y: 260, fill: "#AD2A9D",
+                                               label: "Click here - Stage2" }))         
+      var label = box.insert(new Q.UI.Text({x:250, y: 250 - button.p.h, 
                                             label: stage.options.label }));
       button.on("click",function() {
         Q.clearStages();
-        Q.stageScene('mainMenu');
+        Q.stageScene('level2');
       });
       box.fit(20);
     });
