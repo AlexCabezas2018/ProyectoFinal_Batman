@@ -46,12 +46,12 @@ window.addEventListener("load",function() {
       boomerang_right: { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], rate: 1/10, flip: false, loop: false},
       boomerang_left: { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], rate: 1/10, flip: "x", loop: false},  //falta añadirlo al juego
 
-      boomerang_running_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      boomerang_running_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
-      boomerang_crouched_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      boomerang_crouched_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
-      boomerang_jumping_right: { frames: [0, 1, 2], rate: 1/8, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
-      boomerang_jumping_left: { frames: [0, 1, 2], rate: 1/8, flip: "x", loop: false, trigger: 'punchFinishedTrigger' }
+      boomerang_running_right: { frames: [0, 1, 2], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_running_left: { frames: [0, 1, 2], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_crouched_right: { frames: [0, 1, 2], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_crouched_left: { frames: [0, 1, 2], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_jumping_right: { frames: [0, 1, 2], rate: 1/10, flip: false, loop: false, trigger: 'punchFinishedTrigger' },
+      boomerang_jumping_left: { frames: [0, 1, 2], rate: 1/10, flip: "x", loop: false, trigger: 'punchFinishedTrigger' }
 
       //TO DO: Faltan las animaciones relacionadas con el boomerang, etc
       // Solo faltaria el boomerang de direccion izquierda añadirlo al juego
@@ -77,7 +77,8 @@ window.addEventListener("load",function() {
               isPunching: false,
               hasCollectableGun: false,
               hasCollectableBoomerang: false,
-              died: false
+              died: false,
+              isThrowingBoomerang: false
 
           });
           this.add('2d, platformerControls, animation');
@@ -170,7 +171,7 @@ window.addEventListener("load",function() {
        * correspondiente
        **/
       punch: function() {
-          if(this.p.canTakeDamage) {
+          if(this.p.canTakeDamage && !this.p.isPunching) {
             this.p.isPunching = true;
             if(this.p.isCrouching) {
               //Animaciones cuando batman da puñetazos agachado
@@ -197,28 +198,46 @@ window.addEventListener("load",function() {
       },
 
       boomerang: function() {
-          if(this.p.canTakeDamage) {
+          if(this.p.canTakeDamage && !this.p.isPunching && !this.p.isThrowingBoomerang) {
             this.p.isPunching = true;
+            this.p.isThrowingBoomerang = true;
             if(this.p.isCrouching) {
               //Animaciones cuando batman lanza boomerang agachado
               this.p.vx = 0;
               this.p.sheet = "batmanBoomerangCrouched";
               this.play("boomerang_crouched_" + this.p.direction, 1);
-              this.stage.insert(new Q.BatmanBoomerang({x: this.p.x + 50, y: this.p.y - 10}));
+              if(this.p.direction == "left") {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x - 50  , y: this.p.y - 5, vx: -200 }));
+              }
+              else {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x + 50  , y: this.p.y - 5, vx: 200 }));
+              }
 
             }
             else if(this.p.isJumping){
               //Animaciones cuando batman lanza boomerang saltando
               this.p.sheet = "batmanBoomerangJumping";
               this.play("boomerang_jumping_" + this.p.direction, 1);
-              this.stage.insert(new Q.BatmanBoomerang({x: this.p.x + 50, y: this.p.y - 10}));
+              if(this.p.direction == "left") {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x - 50  , y: this.p.y - 10, vx: -200 }));
+              }
+              else {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x + 50  , y: this.p.y - 10, vx: 200 }));
+              }
+
+              
             }
             else {
               //Animaciones cuando batman lanza boomerang de pie
               this.p.vx = 0;
               this.p.sheet = "batmanBoomerangRunning";
               this.play("boomerang_running_" + this.p.direction, 1);
-              this.stage.insert(new Q.BatmanBoomerang({x: this.p.x + 50, y: this.p.y - 10}));
+              if(this.p.direction == "left") {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x - 50  , y: this.p.y - 10, vx: -200 }));
+              }
+              else {
+                this.stage.insert(new Q.BatmanBoomerang({ x: this.p.x + 50  , y: this.p.y - 10, vx: 200 }));
+              }
 
             }
 
@@ -294,24 +313,31 @@ window.addEventListener("load",function() {
       }
   });
 
-    Q.Sprite.extend("BatmanBoomerang", { //actualizado y funciona
-      init: function(p) {
-         this._super(p, {
-           vx: 80,
-           sheet: 'batmanBoomerang',
-           sprite: 'batman_anims',
-           frame: 0,
-           gravity: 0,
-           scale: 2,  //ajustamos el tamaño del boomerang
-           });
-           this.add('2d, aiBounce, animation, toca'); //podeis cambiar la animacion de "toca"
-       },
-       step: function(dt){
-          this.play("boomerang_right", 1);
-          //falta diferenciarlo entre la direcciones dependiendo de la posicion de batman
-          // izquierda o derecha
-       }
-      });
+  Q.Sprite.extend("BatmanBoomerang", { //actualizado y funciona
+    init: function(p) {
+       this._super(p, {
+         vx: 40,
+         sheet: 'batmanBoomerang',
+         sprite: 'batman_anims',
+         frame: 0,
+         gravity: 0,
+         scale: 2,  //ajustamos el tamaño del boomerang
+         actualLocation: 0 //Esta variable almacena donde se situa el boomerang al comienzo
+        });
+
+        this.add('2d, aiBounce, animation, toca'); //podeis cambiar la animacion de "toca"
+        this.p.actualLocation = this.p.x;
+        
+     },
+     
+     step: function(dt){
+        this.play("boomerang_right", 1);
+        if(Math.abs(this.p.x - this.p.actualLocation) > 200) { //Si el boomerang ha recorrido mas de 200 unidades, entonces cambiamos la direccion
+          this.p.vx *= -1;
+        }
+
+     }
+    });
 
 
 
@@ -970,14 +996,17 @@ window.addEventListener("load",function() {
      Q.component('toca', {
  
        added: function() {
-       this.entity.on("bump.left",this,"colObjeto");
-       this.entity.on("bump.right",this,"colObjeto");
-       this.entity.on("bump.bottom",this,"colObjeto"); //para ataques con Rayos
+        this.entity.on("bump.left",this,"colObjeto");
+        this.entity.on("bump.right",this,"colObjeto");
+        this.entity.on("bump.bottom",this,"colObjeto"); //para ataques con Rayos
        },
  
        colObjeto: function(col){
-         if(col.obj.isA("Batman")) {  //colisiona con Batman
-           col.obj.trigger('enemy.hit'); // daño a batman
+         if(!col.obj.isA("Batman")) {  //no colisiona con Batman
+           col.obj.trigger('enemy.hit'); // daño a la entidad
+         }
+         else{
+           col.obj.p.isThrowingBoomerang = false; //entonces es batman, y además es un proyectil suyo, así que no le hacemos daño y le capacitamos para poder lanzar otro boomerang
          }
          this.entity.destroy();  //desaparece si colisona con batman como sino
        } 
