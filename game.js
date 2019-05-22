@@ -425,110 +425,7 @@ window.addEventListener("load",function() {
 
   /******************************************************************************/
 
-    /* Mario */
-    Q.Sprite.extend("Player",{
-        init: function(p){
-      	    this._super(p, {
-            sheet: "mario",
-            sprite: "mario",
-            jumpSpeed: -400,
-            x: 150,
-            y: 500,
-            die: false,
-            type: Q.PLAYER,
-            collisionMask: Q.SPRITE_DEFAULT | Q.COIN,
-            win: false,
-            score: 0
-            
-          });
-        this.add('2d, platformerControls, animation'); 
-        this.on("bump.top","bumpTop"); 
-        this.on("enemy.hit","enemyHit");
-        this.on("win","marioWin"); 
-        },
-
-        bumpTop: function(col) {
-          if(col.obj.isA("TileLayer")) {
-            if(col.tile == 24) { col.obj.setTile(col.tileX,col.tileY, 36); }
-            else if(col.tile == 36) { col.obj.setTile(col.tileX,col.tileY, 24); }
-          }
-        },
-
-        marioDies: function () {
-        	Q.stageScene("endGame",1, { label: "You lose!!" }); 
-          this.destroy();
-        },
-
-        marioWin: function(){
-        	this.p.win = true;
-        	Q.stageScene("endGame",1, { label: "You Win!!" });
-        },
-
-        marioDiesAnim: function(){
-      	  this.p.collisionMask = Q.SPRITE_NONE; //atraviesa el suelo
-          this.p.vy = 450;
-          this.p.vx = 0;
-        },
-
-        marioWinsAnim: function(){
-          this.p.collisionMask = Q.SPRITE_NONE; 
-          this.play('jump_right');
-          this.p.vx = 15;
-          this.p.vy = -35; //avanza en diagonal a darle un beso
-        },
-
-        enemyHit: function() {
-        	if(!this.p.win){
-        		this.play("die");
-          	this.p.die = true;
-        	}
-        },
-
-        step: function(dt) {
-          var stop = false;
-
-          if(this.p.die || this.p.win)
-          	stop = true;
-
-          if(!stop) { 
-            this.p.gravity = 1;
-
-              if(this.p.vx < 0) {
-                if(this.p.landed > 0){this.play("run_left");} 
-                else {this.play("jump_left");}
-                this.p.direction = "left";
-              } 
-              else if(this.p.vx > 0) {
-                if(this.p.landed > 0) {this.play("run_right");} 
-                else {this.play("jump_right");}
-                this.p.direction = "right";
-              } 
-              else {
-                this.play("stand_" + this.p.direction);
-              }
-                 
-            
-          }
-
-          if(this.p.y > 700) {
-            this.stage.unfollow(); 
-          }
-
-          if(this.p.y > 950) {
-          	this.marioDies();
-          }
-
-          if(this.p.win){
-            this.marioWinsAnim();
-          }
-
-          if(this.p.die){
-          	this.marioDiesAnim();
-          }
-        }
-      });
-
-
+  
     /*Base enemy*/
     Q.component('defaultEnemy', {
 
@@ -780,9 +677,9 @@ window.addEventListener("load",function() {
         this._super(p, { sheet: 'shot',gravity:0.5,x:252,y:114, cont:0});
         this.add("2d,aiBounce");
         this.on("bump.top",this,"MarioWins");
-      this.on("bump.left",this,"MarioWins");
-      this.on("bump.right",this,"MarioWins");
-      this.on("bump.bottom",this,"MarioWins");
+        this.on("bump.left",this,"MarioWins");
+        this.on("bump.right",this,"MarioWins");
+        this.on("bump.bottom",this,"MarioWins");
       },
         MarioWins: function(col){
       if(col.obj.isA("Batman")) {
@@ -1149,6 +1046,7 @@ window.addEventListener("load",function() {
         this.entity.on("bump.left",this,"colBatman");
         this.entity.on("bump.right",this,"colBatman");
         this.entity.on("bump.bottom",this,"colBatman"); //para ataques con Rayos
+        this.entity.on("bump.top",this,"colBatman"); //si salta encima del Joker
       },
 
       colBatman: function(col){
@@ -1311,7 +1209,10 @@ window.addEventListener("load",function() {
 
              this.add('2d, aiBounce, animation, efectted');
              this.play("run_left"); //EMPIEZA HACIA LA IZQUIERDA
+             
           },
+
+
           step: function(dt){
  
              if(!dieJoker){
