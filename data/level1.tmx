@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="150" height="38" tilewidth="34" tileheight="34" infinite="0" nextlayerid="46" nextobjectid="454">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="150" height="38" tilewidth="34" tileheight="34" infinite="0" nextlayerid="46" nextobjectid="457">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
   <image source="../images/tiles.png" width="238" height="238"/>
   <tile id="0">
@@ -6174,7 +6174,7 @@
    </properties>
   </object>
   <object id="425" name="tank" gid="51" x="1991.67" y="1221" width="55" height="40"/>
-  <object id="452" gid="60" x="603.666" y="987" width="110" height="100"/>
-  <object id="453" gid="61" x="1418.33" y="895" width="110" height="100"/>
+  <object id="455" gid="60" x="554.333" y="973.667" width="110" height="100"/>
+  <object id="456" gid="61" x="1441" y="885.667" width="110" height="100"/>
  </objectgroup>
 </map>
