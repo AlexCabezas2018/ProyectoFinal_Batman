@@ -9,7 +9,6 @@ window.addEventListener("load",function() {
   Q.PLAYER = 1;
   Q.COIN = 2;
   Q.ENEMY = 4;
-  var time = 0;
 
 
 
@@ -402,6 +401,26 @@ window.addEventListener("load",function() {
           Q.audio.play("batmanCollectable.mp3");
         }
       }
+    });
+
+    Q.component('toca', {
+ 
+      added: function() {
+       this.entity.on("bump.left",this,"colObjeto");
+       this.entity.on("bump.right",this,"colObjeto");
+       this.entity.on("bump.bottom",this,"colObjeto"); //para ataques con Rayos
+      },
+
+      colObjeto: function(col){
+        if(!col.obj.isA("Batman")) {  //no colisiona con Batman
+          col.obj.trigger('enemy.hit'); // daño a la entidad
+        }
+        Q('Batman').first().p.isThrowingBoomerang = false;
+        Q('Batman').first().p.isPunching = false;
+        
+        
+        this.entity.destroy();  //desaparece si colisona con batman como sino
+      } 
     });
 
   /******************************************************************************/
@@ -1104,7 +1123,7 @@ window.addEventListener("load",function() {
      /*********************STAGE 3**************************** */
     
      var dieJoker = false; // si ha muerto joker
-     var lifesJoker = 2; // las vidas que posee el joker
+     var lifesJoker = 5; // las vidas que posee el joker
  
      Q.animations('Joker-animations', {
        
@@ -1112,63 +1131,63 @@ window.addEventListener("load",function() {
        attack_right:{frames:[0,1], rate: 1/3, loop: false, flip:"x"},
        fight_right:{ frames:[2,3,4,5,6], rate: 1/3, loop: false, flip:"x"},
        fight_left: { frames:[2,3,4,5,6], rate: 1/3, loop: false},
-       rayos:{ frames: [0,1,2], rate:1/2.5, loop: false},  //JokerRayos
-       run_left:{ frames: [1,2,3,4,5,6], rate:1/5, flip: false, loop: true},//JOKERRUNNING
-       run_right:{ frames: [1,2,3,4,5,6], rate:1/5, flip:"x", loop: true},//JOKERRUNNING
+       rayos:{ frames: [0,1,2], rate:1/3, loop: false},  //JokerRayos
+       run_left:{ frames: [1,2,3,4,5,6], rate:1/8, flip: false, loop: true},//JOKERRUNNING
+       run_right:{ frames: [1,2,3,4,5,6], rate:1/8, flip:"x", loop: true},//JOKERRUNNING
        die_left:{ frames:[0,1,2,3,4,5], rate:1, trigger: 'muerte', loop: false},//JokerDie
        die_right:{ frames:[0,1,2,3,4,5], rate:1, flip:"x", trigger: 'muerte', loop: false},//JokerDie
-       stand_right:{ frames: [0], rate: 1/3, flip:"x"},
-       stand_left:{ frames: [0], rate: 1/3},
        boomerang_right:{frames:[0,1,2,3,4], rate:1/3, flip:"x"}, //JokerBoomerang
        boomerang_left:{frames:[0,1,2,3,4], rate:1/3},  //JokerBoomerang
        shot_left:{frames:[0,1,2,3], rate:1/3},//JokerBalas
        shot_right:{frames:[0,1,2,3], rate:1/3, flip:"x"}  //JokerBalas
+
      });
+     
+     Q.component('colJoker', {
  
-     Q.component('toca', {
- 
-       added: function() {
-        this.entity.on("bump.left",this,"colObjeto");
-        this.entity.on("bump.right",this,"colObjeto");
-        this.entity.on("bump.bottom",this,"colObjeto"); //para ataques con Rayos
-       },
- 
-       colObjeto: function(col){
-         if(!col.obj.isA("Batman")) {  //no colisiona con Batman
-           col.obj.trigger('enemy.hit'); // daño a la entidad
-         }
-         Q('Batman').first().p.isThrowingBoomerang = false;
-         Q('Batman').first().p.isPunching = false;
-         
-         
-         this.entity.destroy();  //desaparece si colisona con batman como sino
-       } 
-     });
+      added: function() {
+        this.entity.on("bump.left",this,"colBatman");
+        this.entity.on("bump.right",this,"colBatman");
+        this.entity.on("bump.bottom",this,"colBatman"); //para ataques con Rayos
+      },
+
+      colBatman: function(col){
+        if(col.obj.isA("Batman")) {  //colisiona con Batman
+          col.obj.trigger('enemy.hit'); // daño a batman
+        }
+        this.entity.destroy();  //desaparece si colisona con batman como sino
+
+        /*if(Q('Batman').first().p.died){
+          console.log("Batman Muerte"); //mejorar para que pare cuando batman pierda o muera
+        }*/
+      }
+
+    });
+
+     
  
      Q.Sprite.extend("JokerBalas", { 
        init: function(p) {
           this._super(p, {
-            //vx: 100,
             sheet: 'JokerBalas',
             sprite: 'Joker-animations',
             frame: 0,
-            //x:380, //para disparar desde la esquina derecha
             y:430,
             dirDer: false,
             gravity: 0,
             
             });
-            this.add('2d, aiBounce, animation, toca');
+            this.add('2d, aiBounce, animation, colJoker');
         },
  
         step: function(dt){
  
            if(!this.p.dirDer){
-             this.p.vx = -100;
+             this.p.vx = -140;
              this.play("shot_left", 1);
            }
            if(this.p.dirDer){
-             this.p.vx = 100;
+             this.p.vx = 140;
              this.play("shot_right", 1);
            }
         }
@@ -1178,25 +1197,24 @@ window.addEventListener("load",function() {
      Q.Sprite.extend("JokerBoomerang", { 
        init: function(p) {
           this._super(p, {
-            //vx: -10, 
             sheet: 'JokerBoomerang',
             sprite: 'Joker-animations',
             frame: 0,
-            //x:250, 
             y:430,
             gravity: 0,
             });
-            this.add('2d, aiBounce, animation, toca');
+            this.add('2d, aiBounce, animation, colJoker');
         },
+
         step: function(dt){
-         if(!this.p.dirDer){
-           this.p.vx = -100;
-           this.play("boomerang_left", 1);
-         }
-         if(this.p.dirDer){
-           this.p.vx = 100;
-           this.play("boomerang_right", 1);
-         }
+          if(!this.p.dirDer){
+            this.p.vx = -140;
+            this.play("boomerang_left", 1);
+          }
+          if(this.p.dirDer){
+            this.p.vx = 140;
+            this.play("boomerang_right", 1);
+          }
         }
        });
        
@@ -1210,157 +1228,115 @@ window.addEventListener("load",function() {
  
        colIzq: function(col){  //colisona con el lado izquierdo
 
-        if(col.obj.isA("BatmanBoomerang")) {  //colisiona con Joker
-          col.obj.destroy(); 
-          this.entity.giraDer();
-        }
-        else{
-         if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
-           if(Q.inputs["fire"]){  
-            // Q.state.dec("lives", 1);
-           col.obj.trigger('enemy.hit'); // daño a batman
- 
-           lifesJoker--;
-            console.log("muerte");
-             if(lifesJoker <= 0){
-               //this.entity.del("2d");
-               console.log("muerteFatal");
-               dieJoker = true;
-               this.entity.finalJoker = 0;
-               this.entity.muerte(); //Pierde osea muere
-               
-             }
-           }
-           //else{
-             if(!dieJoker){
-             this.entity.giraDer();
-             }
-             /*if(!dieJoker){
-           this.entity.giraDer();  //ANTES ERA TURNRIGHT
-             }*/
-           //}
-         }
-         else{
-           //this.entity.lanzar(); //o lanzar rayos (depende la posicion)
-           //this.entity.ataques = true;
-           this.entity.attack();
-           this.entity.contador = 0;
-           //this.entity.turnLeft();
-         }
-        }
-       },
+            if(col.obj.isA("BatmanBoomerang") || col.obj.isA("BatmanBullet")) {  //colisiona con Joker
+              lifesJoker--;
+              console.log("muerte-Izquierda-objeto");
+              col.obj.destroy(); 
+              this.entity.giraDer();
+            }
+            else{
+                if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
+                  if(Q.inputs["fire"]){  
+                    lifesJoker--;
+                    console.log("muerte-Izquierda"); 
+                  }
+                    
+                  if(!dieJoker){ this.entity.giraDer(); }
+                }
+                else{
+                  this.entity.attack();
+                  this.entity.contadorAtaque = 0;
+                }
+            }
+
+            if(lifesJoker <= 0){
+              console.log("muerteFatal-Izquierda");
+              dieJoker = true;
+              this.entity.finalJoker = 0;
+              this.entity.muerte(); //Pierde osea muere
+            }
+        },
  
        colDer: function(col){
 
-        if(col.obj.isA("BatmanBoomerang")) {  //colisiona con Joker pero aun no hay para boomerang lado derecho
-          col.obj.destroy(); 
-          this.entity.giraIzq();
-        }
-        else{
-        
-         if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
-           if(Q.inputs["fire"]){  
-            // Q.state.dec("lives", 1);
-            col.obj.trigger('enemy.hit'); // daño a batman
+          if(col.obj.isA("BatmanBoomerang")|| col.obj.isA("BatmanBullet")) {  //colisiona con Joker pero aun no hay para boomerang lado derecho
             lifesJoker--;
-            console.log("muerte");
-             if(lifesJoker <= 0){
-               //this.entity.del("2d");
-               console.log("muerteFatal");
-               dieJoker = true;
-               this.entity.finalJoker = 0;
-               this.entity.muerte(); //Pierde osea muere
-               
-             }
-           }
-           //else{
-             if(!dieJoker){
-             this.entity.giraIzq();
-             }
-             /*if(!dieJoker){
-             this.entity.turnLeft();
-             }*/
-           //}
-         }
-         else{
-           //this.entity.lanzar(); //o lanzar rayos (depende la posicion)
-          //this.entity.ataques = true;
-           this.entity.attack();
-           this.entity.contador = 0;
-         }
-           
-       }
-       }
+            console.log("muerte-Derecha-objeto");
+            col.obj.destroy(); 
+            this.entity.giraIzq();
+          }
+          else{
+          
+            if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
+              if(Q.inputs["fire"]){  
+                lifesJoker--;
+                console.log("muerte-Derecha");
+              }
+                
+              if(!dieJoker){  this.entity.giraIzq(); }
+
+            }
+            else{
+              this.entity.attack();
+              this.entity.contadorAtaque = 0;
+            }
+              
+          }
+
+          if(lifesJoker <= 0){
+            console.log("muerteFatal-Derecha");
+            dieJoker = true;
+            this.entity.finalJoker = 0;
+            this.entity.muerte(); //Pierde osea muere
+          }
+          
+        }
+
      });
  
        Q.Sprite.extend("JokerRunning", { //principal
          init: function(p) {
             this._super(p, {
-              vx: -100, 
+              vx: -140, 
               sheet: 'JokerRunning',
               sprite: 'Joker-animations',
               frame: 1,
               x:400, 
               y:476,
               gravity: 0,
-              ataques: false,
               esquinaDer : false,
               esquinaIzq : false,
               direcionDer : false, //indica si esta llendo a la dercha(false) izquierda true
-              
               });
+
              this.add('2d, aiBounce, animation, efectted');
              this.play("run_left"); //EMPIEZA HACIA LA IZQUIERDA
-             //this.on("bump.left",this,"turnRight");
-             //this.on("bump.right",this,"turnLeft");
           },
           step: function(dt){
  
              if(!dieJoker){
  
-               this.contador++;
+               this.contadorAtaque++;
+
                  if(this.p.x >= 460) { //final de escena 460
-                     //this.p.vx = 0;
-                     //this.esquinaDer = true;
-                     if(this.contador >= 80){
-                     //this.turnLeft();
-                       this.p.y = 436;
-                       this.p.sheet = "JokerRunning";
-                       //if(this.esquinaDer){
-                         this.p.vx = -100;
-                         this.p.direcionDer = false;
-                         this.esquinaDer = false;
-                         this.play("run_left",1);
-                       //}
-                       //else{
-                       //this.p.vx = 100;
-                       //this.p.direcionDer = true;
-                       //this.play("run_right",1);
-                       //}
+                     if(this.contadorAtaque >= 50){
+                        this.p.y = 436;
+                        this.p.sheet = "JokerRunning";
+                        this.p.vx = -140;
+                        this.p.direcionDer = false;
+                        this.esquinaDer = false;
+                        this.play("run_left",1);
                      }
                  }
             
                  if(this.p.x <= 84) {  //aqui es limite 84
-                     //this.p.vx = 0;
-                     //this.contador++;
-                     //this.esquinaIzq = true;
-                     if(this.contador >= 80){
-                       this.p.y = 436;
-                       this.p.sheet = "JokerRunning";
-                       //if(this.esquinaIzq){
-                         this.p.vx = 100;
-                         this.p.direcionDer = true;
-                         this.play("run_right",1);
-                       //}
-                       /*else{
-                         this.p.vx = 100;
-                       this.p.direcionDer = true;
-                       this.play("run_right",1);
-                       }*/
+                     if(this.contadorAtaque >= 50){
+                        this.p.y = 436;
+                        this.p.sheet = "JokerRunning";
+                        this.p.vx = 140;
+                        this.p.direcionDer = true;
+                        this.play("run_right",1);
                      }
-                     /*if(this.contador >= 80){
-                     this.turnRight();
-                     }*/
                  }
              
            }
@@ -1380,7 +1356,7 @@ window.addEventListener("load",function() {
          giraDer: function(){
            this.p.y = 436;
            this.p.sheet = "JokerRunning";
-           this.p.vx = 100;
+           this.p.vx = 140;
            this.p.direcionDer = true;
            this.play("run_right",1);
            
@@ -1389,7 +1365,7 @@ window.addEventListener("load",function() {
          giraIzq: function(){
            this.p.y = 436;
            this.p.sheet = "JokerRunning";
-           this.p.vx = -100;
+           this.p.vx = -140;
            this.p.direcionDer = false;
            this.play("run_left",1);
            
@@ -1399,35 +1375,31 @@ window.addEventListener("load",function() {
          disparar: function(dt){ //para fuego y boomerang
            this.p.vx = 0;
            this.p.y = 413; //nueva posicion
-           this.p.sheet = "JokerA";
+           this.p.sheet = "JokerAttack";
            if(this.p.direcionDer)
            {
              this.play("fight_left", 1);
            }else{
            this.play("fight_right", 1);
            }
-           //this.p.ataques = true;
+
           },
  
          lanzar: function(dt){ //solo para rayos
            this.p.vx = 0;
            this.p.y = 413; //nueva posicion
-           this.p.sheet = "JokerA";
+           this.p.sheet = "JokerAttack";
            if(this.p.direcionDer)
            {
              this.play("attack_left", 1);
            }else{
            this.play("attack_right", 1);
            }
-           //this.p.ataques = true;
            
           },
  
           attack: function(dt){
-           //this.p.vx = 0;
-           //if(this.p.ataques){
-             this.p.ataques = false; //esta variable es necesaria?
- 
+
              var yee = Math.random();
              if(yee < 0.3) {
                this.lanzar();
@@ -1452,69 +1424,22 @@ window.addEventListener("load",function() {
                  }
                }
              }
-               
-             //this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
-             //this.stage.insert(new Q.JokerRayos({x: 265}));
-             //this.stage.insert(new Q.JokerRayos({x: 350}));
-             /*if(this.p.direcionDer){
-               this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerBalas
-             }else{
-               this.stage.insert(new Q.JokerBoomerang({x: 164, dirDer: true}));  //JokerBalas con x : 154 y JokerBoo con 164
-             }*/
-           //}
-           //else{
-             //no hacemos nada
-           //}
          },
          
           muerte: function(){
-           this.p.sheet = "JokerDie";
-           this.p.y = 476;
-           this.p.vx = 0;
-           
-           if(this.p.direcionDer)
-           {
-           this.play("die_left", 1);
-           }else{
-             this.play("die_right", 1);
-           }
-           
+            this.p.sheet = "JokerDie";
+            this.p.y = 476;
+            this.p.vx = 0;
+            
+            if(this.p.direcionDer){
+            this.play("die_left", 1);
+            }
+            else{
+              this.play("die_right", 1);
+            }
           },
  
-          //reeemplazado por gira y en step
-          // creo q ya no hace falta
-          /*turnRight: function() {
-           this.p.y = 436;
-           this.p.sheet = "JokerRunning";
-           if(this.esquinaDer){
-             this.p.vx = -100;
-             this.p.direcionDer = false;
-             this.play("run_left",1);
-           }
-           else{
-             this.p.vx = 100;
-           this.p.direcionDer = true;
-           this.play("run_right",1);
-           }
-         },
          
-         turnLeft: function() {
-           this.p.y = 436;
-           this.p.sheet = "JokerRunning";
-           if(this.esquinaIzq){
-             this.p.vx = 100;
-             this.p.direcionDer = true;
-             this.play("run_right",1);
-             this.esquinaIzq = false
-           }
-           else{
-             this.p.vx = -100;
-             this.p.direcionDer = false;
-             this.play("run_left",1);
-           }
-         },*/
- 
- 
          });  
  
        
@@ -1533,51 +1458,23 @@ window.addEventListener("load",function() {
             ax: 0,
             ay:150,
             });
-            this.add('2d, aiBounce, animation, toca');
+            this.add('2d, aiBounce, animation, colJoker');
             this.play("rayos", 1);
         },
         step: function(dt){
-          var t = 0;
-         
-           if(this.p.y >= 403){  //pero es 398
+           if(this.p.y >= 403){
                 this.destroy();
            }
- 
          }
  
        });
- 
-     /*Q.Sprite.extend("Joker", {
-       init: function(p) {
-          this._super(p, {
-            sheet: 'JokerA',
-            sprite: 'Joker-animations',
-            });
-            this.add('2d, aiBounce, animation');
-            this.play("manda_L");
-        },
-        
-        step: function(dt){
-         time += dt;
-         if(time >= 10) {
-           //presentamos al joker de pie
-           this.destroy();
-         }
-        },
- 
-       });
-       */
-     /*Mejorar las dimensiones de sheet*/
        
  
      Q.scene("level3",function(stage) {
-       //Q.state.reset({score: 0, lives: 5});  //mejorara lo de las vidas
        Q.stageTMX("level3.tmx",stage);
        Batman = stage.insert(new Q.Batman({x: 200,y: 340}));
        stage.add("viewport").follow(Batman,{x:false, y:false});
-      // stage.centerOn(250,400);
        stage.unfollow(); 
-       //stage.insert(new Q.Joker({x:400, y:446}));
        stage.insert(new Q.JokerRunning());
        
        //musica del nivel de joker
