@@ -605,6 +605,84 @@ window.addEventListener("load",function() {
        }
       });
 
+
+/*Goomba2*/
+    Q.Sprite.extend("Goomba3",{
+      init: function(p) {
+        this._super(p, { sheet: 'goomba2', vx: 0, vy: 0, gravity: 0, cont : 0, cont2 : 0 ,type: Q.ENEMY});
+        this.add('defaultEnemy');
+        this.play('flyLeft');
+
+      },
+
+      step: function(dt) {
+        if(this.p.dead) {
+          this.del('2d, aiBounce');
+          this.p.deadTimer++;
+          if (this.p.deadTimer > 6) { //menos tiempo porque si no puedes saltar 2 veces sobre el cadaver
+            this.destroy();
+          }
+            return;
+          } 
+
+        if(this.p.cont == 10) //cont2 para que descanse de usar el lanzallamas
+            {
+              this.stage.insert(new Q.Fire2({x: this.p.x - 70, y: this.p.y}));
+              this.p.cont=0;
+              
+            }
+            else{
+              if(this.p.cont2 < 300){
+                this.p.cont++;
+                this.p.cont2++;
+              }
+              else if(this.p.cont2 > 550){
+                this.p.cont2 = 0;
+              }
+              else {
+                this.p.cont2++;
+              }
+            }
+
+
+
+
+
+        },
+
+    });
+
+
+    Q.Sprite.extend("Fire2", {  
+       init: function(p) {
+          this._super(p, {
+            vx: -50,
+            sprite: 'goomba2', 
+            sheet: 'goomba2',
+            vy: 0,
+            gravity: 0,
+            rangeX: 100, 
+            type: Q.ENEMY
+            });
+
+            this.add('2d, aiBounce, animation, toca');
+            this.add('defaultEnemy');
+            this.play("fireLeft", 1);
+
+            this.p.initialX = this.p.x;
+       },
+
+       step: function(dt){
+
+        if(this.p.x < this.p.initialX - this.p.rangeX) { 
+            this.destroy();
+          }
+
+       }
+
+      });
+
+
     /*Meta barra-princesa*/
     Q.Sprite.extend("Goal", {
       init: function(p,defaults) {
@@ -969,7 +1047,9 @@ window.addEventListener("load",function() {
           flyLeft: { frames: [1], rate: 1/8 },
           flyRight: { frames: [1], rate: 1/8, flip: "x"},
           dead: { frames: [2,3], rate: 1/2,loop: true},
-          fire:{ frames: [4], rate: 1/2, loop: false}
+          fire:{ frames: [4], rate: 1/2, loop: false},
+          fireLeft:{ frames: [5], rate: 1/2, loop: false},
+          fireRight:{ frames: [5], rate: 1/2, loop: false, flip: "x"}
         });
         
         Q.stageScene("mainMenu");

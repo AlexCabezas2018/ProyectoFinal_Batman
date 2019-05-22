@@ -1,6 +1,7 @@
 {
 	"front":{"sx":0,"sy":0,"tileW":110,"tileH":110,"frames":1},
-	"fly":{"sx":111,"sy":0,"tileW":110,"tileH":110,"frames":1},
+	"fly":{"sx":119,"sy":23,"tileW":80,"tileH":74,"frames":1},
 	"die":{"sx":242,"sy":0,"tileW":95,"tileH":130,"frames":2},
-	"fire":{"sx":43,"sy":111,"tileW":20,"tileH":56,"frames":1}
+	"fire":{"sx":43,"sy":111,"tileW":19,"tileH":56,"frames":1},
+	"fireH":{"sx":136,"sy":133,"tileW":19,"tileH":56,"frames":1}
 }
