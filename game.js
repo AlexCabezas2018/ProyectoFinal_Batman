@@ -87,7 +87,7 @@ window.addEventListener("load",function() {
           this.on("punchFinishedTrigger");
           this.on("allowToTakeDamageTrigger")
           this.on("enemy.hit", "hit");
-          this.on("bump.top","bumpTop"); 
+          //this.on("bump.top","bumpTop"); 
           this.on("stage1completed","gotoStage2"); 
 
           //Implementar las colisiones y los disparos.
@@ -455,6 +455,7 @@ window.addEventListener("load",function() {
     	  this.entity.on("bump.top",this,"killPlayer");
     	  this.entity.on("bump.left", this, "killPlayer");
     	  this.entity.on("bump.right", this, "killPlayer");
+        this.entity.on("bump.bottom", this, "killPlayer");
     	  this.entity.on("hit.sprite",this,"die");
         },
 
@@ -478,7 +479,7 @@ window.addEventListener("load",function() {
     Q.Sprite.extend("Goomba",{
       init: function(p) {
         this._super(p, { sheet: 'goomba', vx: -100, rangeX: 200,
-          gravity: 0});
+          gravity: 0, type: Q.ENEMY});
         this.p.initialX = this.p.x;
         this.add('defaultEnemy');
         this.play('walkLeft');
@@ -516,7 +517,7 @@ window.addEventListener("load",function() {
             this.play('walkLeft');
           }
 
-        },
+        }
   });
 
 
@@ -524,7 +525,7 @@ window.addEventListener("load",function() {
     Q.Sprite.extend("Bloopa",{
       init: function(p) {
         this._super(p, { sheet: 'bloopa', vy: -140, rangeY: 90,
-          gravity: 0, jumpSpeed: -230});
+          gravity: 0, jumpSpeed: -230, type: Q.ENEMY});
         this.p.initialY = this.p.y;
         this.add('defaultEnemy');
         this.play('jump');
@@ -555,6 +556,76 @@ window.addEventListener("load",function() {
         }
     });
 
+    /*Goomba2*/
+    Q.Sprite.extend("Goomba2",{
+      init: function(p) {
+        this._super(p, { sheet: 'goomba2', vx: -225, vy: 30, rangeX: 200, rangeY: 90,
+          gravity: 0, type: Q.ENEMY});
+        this.p.initialX = this.p.x;
+        this.p.initialY = this.p.y;
+        this.add('defaultEnemy');
+        this.play('front');
+
+      },
+
+      step: function(dt) {
+        if(this.p.dead) {
+          this.del('2d, aiBounce');
+          this.p.deadTimer++;
+          if (this.p.deadTimer > 6) { //menos tiempo porque si no puedes saltar 2 veces sobre el cadaver
+            this.destroy();
+          }
+            return;
+          }
+          //this.p.vy = 0;
+          if(this.p.vx == 0){
+            this.p.vx = -150;
+          }
+          if(this.p.x >= this.p.initialX) { 
+            this.stage.insert(new Q.Fire({x: this.p.x - 20, y: this.p.y + 100})); 
+            this.p.x = this.p.initialX;
+            this.p.vx = -this.p.vx;
+          } 
+          else if(this.p.x + this.p.rangeX < this.p.initialX) { 
+            this.stage.insert(new Q.Fire({x: this.p.x - 20, y: this.p.y + 100}));
+            this.p.x = this.p.initialX - this.p.rangeX;
+            this.p.vx = -this.p.vx;
+          }
+
+          if(this.p.vy == 0){
+            this.p.vy = 30;
+          }
+          if(this.p.y >= this.p.initialY) { 
+            this.p.y = this.p.initialY;
+            this.p.vy = -this.p.vy;
+          } 
+          else if(this.p.y + this.p.rangeY < this.p.initialY) { 
+            this.p.y = this.p.initialY - this.p.rangeY;
+            this.p.vy = -this.p.vy;
+          }
+
+        }
+             
+    });
+
+
+    Q.Sprite.extend("Fire", {  
+       init: function(p) {
+          this._super(p, {
+            vx: 0,
+            sprite: 'goomba2', 
+            sheet: 'goomba2',
+            vy:-10,
+            gravity: 0.5,
+            type: Q.ENEMY
+            });
+
+            this.add('2d, aiBounce, animation, toca');
+            this.add('defaultEnemy');
+            this.play("fire");
+       }
+      });
+
 
     /*Meta barra-princesa*/
     Q.Sprite.extend("Goal", {
@@ -575,6 +646,7 @@ window.addEventListener("load",function() {
         }
       },
     });
+
      /*****************************************************************Objetos Stage 2*************************************************************************************/
 
       Q.component('defCuch', {
@@ -628,11 +700,11 @@ window.addEventListener("load",function() {
         this._super(p, { sheet: 'shot',gravity:0.5,x:252,y:114, cont:0});
         this.add("2d,aiBounce");
         this.on("bump.top",this,"MarioWins");
-      this.on("bump.left",this,"MarioWins");
-      this.on("bump.right",this,"MarioWins");
-      this.on("bump.bottom",this,"MarioWins");
+        this.on("bump.left",this,"MarioWins");
+        this.on("bump.right",this,"MarioWins");
+        this.on("bump.bottom",this,"MarioWins");
       },
-        MarioWins: function(col){
+      MarioWins: function(col){
       if(col.obj.isA("Batman")) {
           Q.stageScene("mainMenu");
         }
@@ -869,11 +941,12 @@ window.addEventListener("load",function() {
 
 
    Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
-    "bloopa.json, bloopa.png,acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
+    "bloopa.json, bloopa.png, goomba2.json, goomba2.png, acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
     "coin.json, coin.png, batman.png, batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3",  function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
+        Q.compileSheets("goomba2.png","goomba2.json");
         Q.compileSheets("bloopa.png","bloopa.json");
         Q.compileSheets("tiles.png","tiles.json");
         Q.compileSheets("batman.png", "batman.json")
@@ -889,23 +962,7 @@ window.addEventListener("load",function() {
         Q.compileSheets("acc1.png","acc1.json");
         Q.sheet("Joker","joker.png");
         Q.compileSheets("joker.png","joker.json");
-         Q.compileSheets("buttEle.png","buttEle.json");
-        /* no animations
-        Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
-        Q.sheet("goomba","goomba.png", { tilew: 32, tileh: 32 });
-        Q.sheet("bloopa","bloopa.png", { tilew: 32, tileh: 32 });
-        Q.sheet("princess","princess.png", { tilew: 32, tileh: 32 });
-        */
-
-        Q.animations("mario", {
-          run_right: { frames: [1,2], rate: 1/5, flip: false, loop: true },
-          run_left: { frames:  [1,2], rate: 1/5, flip: "x", loop: true },
-          stand_right: { frames:[0], rate: 1/5, flip: false },
-          stand_left: { frames: [0], rate: 1/5, flip: "x" }, 
-          jump_right: { frames: [4], rate: 1/5, flip: false },
-          jump_left: { frames:  [4], rate: 1/5, flip: "x" },
-          die: { frames:  [12], rate: 1/5, flip: false, loop: true }
-          });
+        Q.compileSheets("buttEle.png","buttEle.json");
 
         Q.animations("coin", {
           shiny: { frames: [0,1,2], rate: 1/5, flip: 'x', loop: true }
@@ -922,6 +979,13 @@ window.addEventListener("load",function() {
         Q.animations("bloopa", {
           jump: { frames: [0,1], rate: 1/2, loop: true },
           dead: { frames: [2], rate: 1/8 }
+        });
+        Q.animations("goomba2", {
+          front: { frames: [0], rate: 1/8,},
+          flyLeft: { frames: [1], rate: 1/8 },
+          flyRight: { frames: [1], rate: 1/8, flip: "x"},
+          dead: { frames: [2,3], rate: 1/2,loop: true},
+          fire:{ frames: [4], rate: 1/2, loop: false}
         });
         
         Q.stageScene("mainMenu");
