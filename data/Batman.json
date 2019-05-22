@@ -1,5 +1,4 @@
 {
-    
 	"batmanBoomerang": { "sx":207, "sy":93,"tilew":10 ,"tileh":10, "frames": 10 },
 	"batmanStatic": { "sx":-1, "sy":4,"tilew":30 ,"tileh":32, "frames": 4 },
     "batmanRunning": { "sx":1, "sy":40,"tilew":28 ,"tileh":33, "frames": 6 } , 
@@ -10,11 +9,12 @@
     "batmanHittedRunning": { "sx":188, "sy":112,"tilew":28 ,"tileh":31, "frames": 2 },
     "batmanPunchCrouched": { "sx":-6, "sy":142,"tilew":34 ,"tileh":33, "frames": 4 }, 
     "batmanPunchJumping": { "sx":-6, "sy":176,"tilew":34 ,"tileh":33, "frames": 4 },
-    "batmanPunch": {"sx":-5, "sy":107,"tilew":34 ,"tileh":32, "frames": 4},
-    "batmanPistolRunning": {},
-    "batmanPistolCrouched": {},
-    "batmanPistolJumping": {},
+    "batmanPunch": {"sx":-5, "sy":107,"tilew":34 ,"tileh":32, "frames": 4 },
+    "batmanPistolRunning": {"sx":3, "sy":213,"tilew":33 ,"tileh":32, "frames": 4 },
+    "batmanPistolCrouched": {"sx":3, "sy":256,"tilew":33 ,"tileh":32, "frames": 4 },
+    "batmanPistolJumping": {"sx":3, "sy":291,"tilew":33 ,"tileh":31, "frames": 4 },
     "batmanBoomerangRunning": { "sx":136, "sy":214,"tilew":32 ,"tileh":33, "frames": 3 },
     "batmanBoomerangCrouched": { "sx":136, "sy":257,"tilew":32 ,"tileh":33, "frames": 3 },
-    "batmanBoomerangJumping": { "sx":136, "sy":291,"tilew":32 ,"tileh":33, "frames": 3 }
+    "batmanBoomerangJumping": { "sx":136, "sy":291,"tilew":32 ,"tileh":33, "frames": 3 },
+    "bullet" : { "sx":205, "sy":85, "tilew":16 , "tileh":6, "frames": 3 }
 }
