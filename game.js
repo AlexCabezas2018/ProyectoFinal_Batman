@@ -1168,7 +1168,6 @@ window.addEventListener("load",function() {
              this.p.vx = 140;
              this.play("shot_right", 1);
            }
-           Q.audio.play("joker_fuego.mp3");
         }
  
        });
@@ -1194,7 +1193,6 @@ window.addEventListener("load",function() {
             this.p.vx = 140;
             this.play("boomerang_right", 1);
           }
-          Q.audio.play("joker_boomerang.mp3");
         }
        });
        
@@ -1397,6 +1395,7 @@ window.addEventListener("load",function() {
              //agregar musica ya sea diferenciando de rayos a disparos
              var yee = Math.random();
              if(yee < 0.3) {
+              Q.audio.play("joker_rayos.mp3", {loop: true});
                this.lanzar();
                this.stage.insert(new Q.JokerRayos());  //RAZON DE 85 
                this.stage.insert(new Q.JokerRayos({x: 265}));
@@ -1405,6 +1404,7 @@ window.addEventListener("load",function() {
              else{
                this.disparar();
                if(yee < 0.6){
+                Q.audio.play("joker_fuego.mp3", {loop: true});
                  if(this.p.direcionDer){
                    this.stage.insert(new Q.JokerBalas({x:380, dirDer: false}));  //JokerBalas
                  }else{
@@ -1412,6 +1412,7 @@ window.addEventListener("load",function() {
                  }
                }
                else{
+                Q.audio.play("joker_boomerang.mp3", {loop: true});
                  if(this.p.direcionDer){
                    this.stage.insert(new Q.JokerBoomerang({x:380, dirDer: false}));  //JokerBalas
                  }else{
@@ -1458,7 +1459,6 @@ window.addEventListener("load",function() {
            if(this.p.y >= 403){
                 this.destroy();
            }
-           Q.audio.play("joker_rayos.mp3");
          }
  
        });
