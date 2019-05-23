@@ -1097,11 +1097,11 @@ window.addEventListener("load",function() {
       box.fit(20);
     });
 
-     /*********************STAGE 3**************************** */
+    /*********************STAGE 3**************************** */
     
      var dieJoker = false; // si ha muerto joker
      var lifesJoker = 5; // las vidas que posee el joker
- 
+     
      Q.animations('Joker-animations', {
        
        attack_left:{ frames: [0,1], rate: 1/3, loop: false},
@@ -1126,7 +1126,7 @@ window.addEventListener("load",function() {
         this.entity.on("bump.left",this,"colBatman");
         this.entity.on("bump.right",this,"colBatman");
         this.entity.on("bump.bottom",this,"colBatman"); //para ataques con Rayos
-        this.entity.on("bump.top",this,"colBatman"); //si salta encima del Joker
+        this.entity.on("bump.top",this,"colBatman"); //encima 
       },
 
       colBatman: function(col){
@@ -1135,9 +1135,9 @@ window.addEventListener("load",function() {
         }
         this.entity.destroy();  //desaparece si colisona con batman como sino
 
-        /*if(Q('Batman').first().p.died){
+        if(Q('Batman').first().p.health == 0){
           console.log("Batman Muerte"); //mejorar para que pare cuando batman pierda o muera
-        }*/
+        }
       }
 
     });
@@ -1159,7 +1159,7 @@ window.addEventListener("load",function() {
         },
  
         step: function(dt){
- 
+
            if(!this.p.dirDer){
              this.p.vx = -140;
              this.play("shot_left", 1);
@@ -1168,6 +1168,7 @@ window.addEventListener("load",function() {
              this.p.vx = 140;
              this.play("shot_right", 1);
            }
+           Q.audio.play("joker_fuego.mp3");
         }
  
        });
@@ -1193,33 +1194,44 @@ window.addEventListener("load",function() {
             this.p.vx = 140;
             this.play("boomerang_right", 1);
           }
+          Q.audio.play("joker_boomerang.mp3");
         }
        });
        
        
-       Q.component('efectted', {
+       Q.component('efectted', { 
  
        added: function() {
-       this.entity.on("bump.left",this,"colIzq");
-       this.entity.on("bump.right",this,"colDer");
+        this.entity.on("bump.left",this,"colIzq");
+        this.entity.on("bump.right",this,"colDer");
+        this.entity.on("bump.bottom",this,"defaultAttack"); //para ataques con Rayos
+        this.entity.on("bump.top",this,"defaultAttack"); //si salta encima del Joker
        },
- 
+       
+       defaultAttack: function(col){  //colisona encina y debajo del joker
+          if(!dieJoker){
+            col.obj.trigger('enemy.hit'); // daño a batman
+          }
+        
+       },
+
        colIzq: function(col){  //colisona con el lado izquierdo
 
             if(col.obj.isA("BatmanBoomerang") || col.obj.isA("BatmanBullet")) {  //colisiona con Joker
               lifesJoker--;
-              console.log("muerte-Izquierda-objeto");
               col.obj.destroy(); 
               this.entity.giraDer();
             }
             else{
                 if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
-                  if(Q.inputs["fire"]){  
+                  if(Q.inputs["fire"]){  //podria ser que le baje mas vidas?
                     lifesJoker--;
-                    console.log("muerte-Izquierda"); 
                   }
                     
-                  if(!dieJoker){ this.entity.giraDer(); }
+                  if(!dieJoker){
+                    col.obj.trigger('enemy.hit'); // daño a batman
+                    this.entity.giraDer(); 
+                  }
                 }
                 else{
                   this.entity.attack();
@@ -1228,7 +1240,6 @@ window.addEventListener("load",function() {
             }
 
             if(lifesJoker <= 0){
-              console.log("muerteFatal-Izquierda");
               dieJoker = true;
               this.entity.finalJoker = 0;
               this.entity.muerte(); //Pierde osea muere
@@ -1239,19 +1250,20 @@ window.addEventListener("load",function() {
 
           if(col.obj.isA("BatmanBoomerang")|| col.obj.isA("BatmanBullet")) {  //colisiona con Joker pero aun no hay para boomerang lado derecho
             lifesJoker--;
-            console.log("muerte-Derecha-objeto");
             col.obj.destroy(); 
             this.entity.giraIzq();
           }
           else{
           
             if(col.obj.isA("Batman")) {  //perdiendo vidas el joker dependiendo
-              if(Q.inputs["fire"]){  
-                lifesJoker--;
-                console.log("muerte-Derecha");
+              if(Q.inputs["fire"]){  //podria ser que le baje mas vidas?
+                lifesJoker--; 
               }
                 
-              if(!dieJoker){  this.entity.giraIzq(); }
+              if(!dieJoker){
+                col.obj.trigger('enemy.hit'); // daño a batman
+                this.entity.giraIzq(); 
+              }
 
             }
             else{
@@ -1262,7 +1274,6 @@ window.addEventListener("load",function() {
           }
 
           if(lifesJoker <= 0){
-            console.log("muerteFatal-Derecha");
             dieJoker = true;
             this.entity.finalJoker = 0;
             this.entity.muerte(); //Pierde osea muere
@@ -1326,14 +1337,17 @@ window.addEventListener("load",function() {
              if(this.finalJoker >= 500){ //para que espere y salga a otra pantalla 
                this.destroy();
                Q.audio.stop();  //se para la musica cuando el joker ha muerto
-               Q.clearStages();
-               Q.stageScene('mainMenu'); // ir a otra pantalla donde se vea el final del Joker
+               setTimeout (this.redireccionar(), 5000);
+               //Q.clearStages();
+               //Q.stageScene('mainMenu'); // ir a otra pantalla donde se vea el final del Joker
              }
            }
  
           },
          
-         
+         redireccionar: function(){window.location="../scenes/endLevel3.html";} ,
+
+
          giraDer: function(){
            this.p.y = 436;
            this.p.sheet = "JokerRunning";
@@ -1380,7 +1394,7 @@ window.addEventListener("load",function() {
           },
  
           attack: function(dt){
-
+             //agregar musica ya sea diferenciando de rayos a disparos
              var yee = Math.random();
              if(yee < 0.3) {
                this.lanzar();
@@ -1421,9 +1435,7 @@ window.addEventListener("load",function() {
           },
  
          
-         });  
- 
-       
+         });
  
      Q.Sprite.extend("JokerRayos", {  
        init: function(p) {
@@ -1446,6 +1458,7 @@ window.addEventListener("load",function() {
            if(this.p.y >= 403){
                 this.destroy();
            }
+           Q.audio.play("joker_rayos.mp3");
          }
  
        });
