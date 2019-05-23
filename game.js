@@ -439,7 +439,7 @@ window.addEventListener("load",function() {
         },
 
         die: function(col) {
-         if(col.obj.isA("Batman")) {
+         if(col.obj.isA("Batman") || col.obj.isA("BatmanBoomerang") ) {
           this.entity.play('dead');
           this.entity.p.dead = true;
           this.entity.p.deadTimer = 0;
