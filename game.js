@@ -704,26 +704,26 @@ window.addEventListener("load",function() {
     });
      /*****************************************************************Objetos Stage 2*************************************************************************************/
 
+     /*Se aplica a las cuchillas y a la barra electrificada, si la tocas en cualquiera de sus partes batman recibe daño*/
       Q.component('defCuch', {
 
         added: function() {
       this.entity.add("animation,2d,aiBounce");
-        this.entity.on("bump.top",this,"MarioWins");
-      this.entity.on("bump.left",this,"MarioWins");
-      this.entity.on("bump.right",this,"MarioWins");
-      this.entity.on("bump.bottom",this,"MarioWins");
-        },
-
-        MarioWins: function(col){
+       this.entity.on("bump.top",this,"Bdies");
+      this.entity.on("bump.left",this,"Bdies");
+      this.entity.on("bump.right",this,"Bdies");
+      this.entity.on("bump.bottom",this,"Bdies");
+      },
+        Bdies: function(col){
       if(col.obj.isA("Batman")) {
-        Q.stageScene("mainMenu");
-    }
-      }
+          col.obj.hit();
+        }
+      },
        
       });
-
+      /*Cinta de la parte inferior que arrastra a batman*/
      Q.animations("cintainferior",{
-      cintainferior: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+      cintainferior: { frames: [3, 2, 1,0], rate: 1/8, flip: false, loop: true }
      });
     Q.Sprite.extend("cintainferior",{
       init: function(p) {
@@ -734,11 +734,11 @@ window.addEventListener("load",function() {
       },
         MarioWins: function(col){
       if(col.obj.isA("Batman")) {
-          col.obj.p.x--;
+          col.obj.p.x++;
         }
       },
       step: function(dt) {} });
-    
+    /*Barra Electrificada*/
     Q.animations("barraElect",{
       barraElect: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
      });
@@ -748,33 +748,34 @@ window.addEventListener("load",function() {
         this.add("defCuch");
         this.play("barraElect");
       },
-      step: function(dt) {} });
+      die: function(){
+        this.destroy();
+      },
+      step: function(dt) {if(!Q.buttEle){this.destroy();}} });
 
+
+
+    /*disparos superiores*/
      Q.Sprite.extend("shot",{
       init: function(p) {
-        this._super(p, { sheet: 'shot',gravity:0.5,x:252,y:114, cont:0});
+        this._super(p, { sheet: 'shot',gravity:0.3,x:252,y:114});
         this.add("2d,aiBounce");
-        this.on("bump.top",this,"MarioWins");
-        this.on("bump.left",this,"MarioWins");
-        this.on("bump.right",this,"MarioWins");
-        this.on("bump.bottom",this,"MarioWins");
+        this.on("bump.top",this,"Bdies");
+      this.on("bump.left",this,"Bdies");
+      this.on("bump.right",this,"Bdies");
+      this.on("bump.bottom",this,"Bdies");
       },
-        MarioWins: function(col){
+        Bdies: function(col){
       if(col.obj.isA("Batman")) {
-          Q.stageScene("mainMenu");
+          col.obj.hit();
+         
         }
         this.destroy();
+        this.shoot();
         
       },
       step: function(dt) {
-            if( this.p.cont===40)
-            {
-              this.shoot();
-              this.p.cont=0;
-            }
-            else{
-              this.p.cont++;
-            }
+            
               },
       shoot: function() {
                     var p = this.p;
@@ -793,7 +794,34 @@ window.addEventListener("load",function() {
                     }
                     
                 } });
+     /*Disparos inferiores*/
+    Q.Sprite.extend("hshot",{
+      init: function(p) {
+        this._super(p, { sheet: 'hshot',gravityY:0,x:362,y:393});
+        this.add("2d,aiBounce");
+        this.on("bump.top",this,"Bdies");
+      this.on("bump.left",this,"Bdies");
+      this.on("bump.right",this,"Bdies");
+      this.on("bump.bottom",this,"Bdies");
     
+      },
+        Bdies: function(col){
+      if(col.obj.isA("Batman")) {
+          col.obj.hit();
+        }
+        this.destroy();
+        this.shoot();
+      },
+      step: function(dt) {
+            this.p.x=this.p.x-2;
+            },
+      shoot: function() {
+                    var p = this.p;
+                      this.stage.insert(new Q.hshot({
+                        x: 362,
+                        y: 359,
+                    }));    
+                } });
     Q.animations("ia",{
       ia: { frames: [0, 1, 2,3], rate: 1/20, flip: false, loop: true }
      });
@@ -820,7 +848,7 @@ window.addEventListener("load",function() {
      });
 
     Q.animations("cintaSup",{
-      cintaSup: { frames: [0, 1, 2,3], rate: 1/8, flip: false, loop: true }
+      cintaSup: { frames: [3, 2, 1,0], rate: 1/8, flip: false, loop: true }
      });
     Q.Sprite.extend("cintaSup",{
       init: function(p) {
@@ -831,7 +859,7 @@ window.addEventListener("load",function() {
       },
       MarioWins: function(col){
       if(col.obj.isA("Batman")) {
-         col.obj.p.x++;
+         col.obj.p.x--;
         }
       },
       step: function(dt) {} });
@@ -878,23 +906,80 @@ window.addEventListener("load",function() {
 
       step: function(dt) {} });
     Q.animations("buttEle",{
-      buttEle: { frames: [0, 1, 2], rate: 1/10, flip: false, loop: true }
+      buttEle: { frames: [0, 1, 2], rate: 1/10, flip: false, loop: true },
+      hit:{ frames: [2, 1, 0], rate: 1/10, flip: false, loop: true }
      });
+
+    
+    Q.Sprite.extend("meta",{
+      init: function(p) {
+        this._super(p, { sheet: 'meta'});
+        this.add("animation,2d,aiBounce");
+        this.on("bump.top",this,"win");
+        this.on("bump.left",this,"win");
+        this.on("bump.right",this,"win");
+        this.on("bump.bottom",this,"win");
+
+      },
+      win: function(col){
+
+      if(col.obj.isA("Batman")) {
+         this.gotoStage3();
+        }
+      },
+      gotoStage3: function(){
+          Q.stageScene("gotoStage3",1, { label: "GOOD JOB" });
+        },
+      step: function(dt) {}});
+
      Q.Sprite.extend("buttEle",{
       init: function(p) {
-        this._super(p, { sheet: 'buttEle', sprite:"buttEle",gravity:0});
+        this._super(p, { sheet: 'buttEle', sprite:"buttEle",gravity:0,health: 30,cont:0});
         this.add("animation,2d,aiBounce");
         this.play("buttEle");
-      },
+        this.on("bump.top",this,"Damage");
+        this.on("bump.left",this,"Damage");
+        this.on("bump.right",this,"Damage");
+        this.on("bump.bottom",this,"Damage");
 
-      step: function(dt) {} });
+      },
+      Damage: function(col){
+
+      if(col.obj.isA("Batman")) {
+         if(col.obj.p.isPunching){
+          
+           if(this.p.health>0){
+            this.p.health--;
+            this.play("hit");
+            this.play("buttEle");
+
+           }
+           else{
+            this.p.barr.destroy();
+            this.destroy();
+           }
+          }
+        }
+      },
+      elect:function(){
+      this.p.barr=  this.stage.insert(new Q.barraElect({x:392,y:200}));
+      },
+      step: function(dt) {if(this.p.cont==0){this.elect();} this.p.cont++;} });
+
     
      Q.Sprite.extend("Fbutton",{
       init: function(p) {
         this._super(p, { sheet: 'Fbutton',gravity:0});
-        this.add("2d,aiBounce");
+       
       },
+      step: function(dt) {} });
 
+
+      Q.Sprite.extend("guns",{
+      init: function(p) {
+        this._super(p, { sheet: 'guns',gravity:0,health: 10});
+       
+      },
       step: function(dt) {} });
     
 
@@ -1072,9 +1157,9 @@ window.addEventListener("load",function() {
     //stage.centerOn(150, 380);
     });
 
-     Q.scene("level2",function(stage) {
+      Q.scene("level2",function(stage) {
       Q.stageTMX("level2.tmx",stage);
-      Mario = stage.insert(new Q.Batman({x: 100,y: 100}));
+      Mario = stage.insert(new Q.Batman({x: 37,y: 272}));
       stage.add("viewport");
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
@@ -1093,6 +1178,21 @@ window.addEventListener("load",function() {
       button.on("click",function() {
         Q.clearStages();
         Q.stageScene('level2');
+      });
+      box.fit(20);
+    });
+     Q.scene('gotoStage3',function(stage) {
+      var box = stage.insert(new Q.UI.Container({
+        x: 30, y: 30, fill: "rgba(41,0,29,0.8)"
+      }));
+      
+      var button = box.insert(new Q.UI.Button({ x: 250, y: 260, fill: "#AD2A9D",
+                                               label: "Click here - Stage3" }))         
+      var label = box.insert(new Q.UI.Text({x:250, y: 250 - button.p.h, 
+                                            label: stage.options.label }));
+      button.on("click",function() {
+        Q.clearStages();
+        Q.stageScene('level3');
       });
       box.fit(20);
     });
