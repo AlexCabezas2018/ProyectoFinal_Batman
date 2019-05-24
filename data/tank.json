@@ -1,0 +1,4 @@
+{
+	"tank":{"sx":1,"sy":3,"tileW":50,"tileH":40,"frames":4},
+	"tankDie":{"sx":201,"sy":3,"tileW":50,"tileH":40,"frames":4}
+}

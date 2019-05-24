@@ -191,13 +191,7 @@
     <property name="sprite" value="tiles"/>
    </properties>
   </tile>
-  <tile id="27">
-   <properties>
-    <property name="Class" value="Collectable"/>
-    <property name="amount" value="1"/>
-    <property name="sprite" value="coin"/>
-   </properties>
-  </tile>
+
   <tile id="28">
    <properties>
     <property name="Class" value="Tile"/>
@@ -240,13 +234,7 @@
     <property name="sprite" value="tiles"/>
    </properties>
   </tile>
-  <tile id="34">
-   <properties>
-    <property name="Class" value="Collectable"/>
-    <property name="amount" value="1"/>
-    <property name="sprite" value="coin"/>
-   </properties>
-  </tile>
+
   <tile id="35">
    <properties>
     <property name="Class" value="Tile"/>
@@ -289,13 +277,7 @@
     <property name="sprite" value="tiles"/>
    </properties>
   </tile>
-  <tile id="41">
-   <properties>
-    <property name="Class" value="Collectable"/>
-    <property name="amount" value="1"/>
-    <property name="sprite" value="coin"/>
-   </properties>
-  </tile>
+
   <tile id="42">
    <properties>
     <property name="Class" value="Tile"/>
@@ -356,123 +338,7 @@
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="51" name="goomba" tilewidth="32" tileheight="32" tilecount="14" columns="14">
-  <image source="../images/goomba.png" width="454" height="57"/>
-  <tile id="0">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="1">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="2">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="3">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="4">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="5">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="6">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="7">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="8">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="9">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="10">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
-  <tile id="11">
-   <properties>
-    <property name="Class" value="Goomba"/>
-    <property name="sheet" value="goomba"/>
-    <property name="sprite" value="goomba"/>
-   </properties>
-  </tile>
- </tileset>
- <tileset firstgid="65" name="bloopa" tilewidth="32" tileheight="32" tilecount="3" columns="3">
-  <image source="../images/bloopa.png" width="96" height="48"/>
-  <tile id="0">
-   <properties>
-    <property name="Class" value="Bloopa"/>
-    <property name="defaultDirection" value="left"/>
-    <property name="sheet" value="bloopa"/>
-    <property name="sprite" value="bloopa"/>
-    <property name="vx" value="50"/>
-   </properties>
-  </tile>
-  <tile id="1">
-   <properties>
-    <property name="Class" value="Bloopa"/>
-    <property name="defaultDirection" value="left"/>
-    <property name="sheet" value="bloopa"/>
-    <property name="sprite" value="bloopa"/>
-    <property name="vx" value="50"/>
-   </properties>
-  </tile>
-  <tile id="2">
-   <properties>
-    <property name="Class" value="Bloopa"/>
-    <property name="defaultDirection" value="left"/>
-    <property name="sheet" value="bloopa"/>
-    <property name="sprite" value="bloopa"/>
-    <property name="vx" value="50"/>
-   </properties>
-  </tile>
- </tileset>
+
  <tileset firstgid="68" name="tilesImach" tilewidth="34" tileheight="34" tilecount="256" columns="16">
   <image source="../images/tilesImach.png" width="544" height="544"/>
   <tile id="251">

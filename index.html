@@ -1,31 +1,32 @@
-<!DOCTYPE html> 
-<html> 
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <title>Batman</title>
-<link rel="icon" type="image/x-icon" href="../icon.ico"/>
+<link rel="icon" type="image/x-icon" href="icon.ico"/>
+
+<script src='lib/quintus.js'></script>
+<script src='lib/quintus_sprites.js'></script>
+<script src='lib/quintus_scenes.js'></script>
+<script src='lib/quintus_2d.js'></script>
+<script src='lib/quintus_input.js'></script>
+<script src='lib/quintus_ui.js'></script>
+<script src='lib/quintus_touch.js'></script>
+<script src='lib/quintus_anim.js'></script>
+<script src='lib/quintus_tmx.js'></script>
+<script src='lib/quintus_audio.js'></script>
+
 <style>
-        video {
-	     background-color: black;
-         margin-top: 8%;
-       }
+ canvas {
+	position: absolute;
+	background-color: black;
+	margin-top: 20%;
+}
 </style>
-<body background="../images/background.jpg"> 
+<script src='game.js'></script>
 
-<div style="text-align:center"> 
-  <video id="video" width="544" height="544" autoplay>
-    <source src="../scenes/initLevel.mp4" type="video/mp4"/>
-    <source src="../scenes/initLevel.webm" type="video/webm"/>
-    <source src="../scenes/initLevel.ogv" type="video/ogg"/>
-  </video>
-</div> 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+</head>
+<body background="images/background.jpg">
 
-<script>
-    $("#video").bind("ended", function() {
-        setTimeout(window.location="mainGame.html", 30000);
-    });
-    
-</script>
-
-</body> 
+</body>
 </html>
-

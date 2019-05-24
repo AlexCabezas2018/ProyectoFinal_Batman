@@ -7,7 +7,7 @@ window.addEventListener("load",function() {
           .controls().touch()
           Q.enableSound();
   Q.PLAYER = 1;
-  Q.COIN = 2;
+  //Q.COIN = 2;
   Q.ENEMY = 4;
 
 
@@ -65,7 +65,7 @@ window.addEventListener("load",function() {
               x: 0,
               y: 0,
               scale: 2, //Aquí se ajusta el tamaño.
-              health: 8,
+              health: 7,
               canTakeDamage: true,
               staticAnim: true,
               gravity: 1,
@@ -74,7 +74,7 @@ window.addEventListener("load",function() {
               isJumping: false,
               isCrouching: false,
               isPunching: false,
-              hasCollectableGun: false,
+              hasCollectableGun: true,
               died: false,
               isThrowingBoomerang: false
 
@@ -289,6 +289,7 @@ window.addEventListener("load",function() {
             this.del('2d'); //Eliminamos ese componente para que batman no responda a controles ni a fisicas.1
             Q.audio.stop(); //Se para toda la musica para solo oir la muerte de batman
             Q.audio.play("batman_death.mp3"); //Reproduce audio de muerte.
+            Q.stageScene("gotoMainMenu",1, { label: "HAHAHA DEATH!" });
           }
           else {
             //Reproducir audio de hit
@@ -389,6 +390,8 @@ window.addEventListener("load",function() {
         this._super(p, {
           x: 0,
           y: 0,
+          //Esto es en caso de que queramos que Batman consiga la pistola en un punto determinado de la partida
+          //Pero por facilidad consideramos que debe tenerla desde el principio.
           //TODO: Añadir una imagen como textura. Concretamente una que hay en el archivo "tiles.png" que tiene el logo de batman. IMPORTANTE
         });
         this.add('2d');
@@ -439,7 +442,7 @@ window.addEventListener("load",function() {
         },
 
         die: function(col) {
-         if(col.obj.isA("Batman") || col.obj.isA("BatmanBoomerang") ) {
+         if(col.obj.isA("Batman") || col.obj.isA("BatmanBoomerang") || col.obj.isA("BatmanBullet")) {
           this.entity.play('dead');
           this.entity.p.dead = true;
           this.entity.p.deadTimer = 0;
@@ -454,10 +457,10 @@ window.addEventListener("load",function() {
        
       });
 
-    /*Goomba*/
-    Q.Sprite.extend("Goomba",{
+    /*Tank explosion*/
+    Q.Sprite.extend("Tank",{
       init: function(p) {
-        this._super(p, { sheet: 'goomba', vx: -100, rangeX: 200,
+        this._super(p, { sheet: 'tank', vx: -100, rangeX: 200,
           gravity: 0, type: Q.ENEMY});
         this.p.initialX = this.p.x;
         this.add('defaultEnemy');
@@ -500,10 +503,10 @@ window.addEventListener("load",function() {
   });
 
 
-    /*Bloopa*/
-    Q.Sprite.extend("Bloopa",{
+    /*Batty (murciélago)*/
+    Q.Sprite.extend("Batty",{
       init: function(p) {
-        this._super(p, { sheet: 'bloopa', vy: -140, rangeY: 90,
+        this._super(p, { sheet: 'batty', vy: -140, rangeY: 90,
           gravity: 0, jumpSpeed: -230, type: Q.ENEMY});
         this.p.initialY = this.p.y;
         this.add('defaultEnemy');
@@ -535,10 +538,10 @@ window.addEventListener("load",function() {
         }
     });
 
-/*Goomba2*/
-    Q.Sprite.extend("Goomba2",{
+/*MiniBoss */
+    Q.Sprite.extend("Miniboss",{
       init: function(p) {
-        this._super(p, { sheet: 'goomba2', vx: -225, vy: 30, rangeX: 200, rangeY: 90,
+        this._super(p, { sheet: 'miniboss', vx: -225, vy: 30, rangeX: 200, rangeY: 90,
           gravity: 0, type: Q.ENEMY});
         this.p.initialX = this.p.x;
         this.p.initialY = this.p.y;
@@ -592,8 +595,8 @@ window.addEventListener("load",function() {
        init: function(p) {
           this._super(p, {
             vx: 0,
-            sprite: 'goomba2', 
-            sheet: 'goomba2',
+            sprite: 'miniboss', 
+            sheet: 'miniboss',
             vy:-10,
             gravity: 0.5,
             type: Q.ENEMY
@@ -606,10 +609,10 @@ window.addEventListener("load",function() {
       });
 
 
-/*Goomba2*/
-    Q.Sprite.extend("Goomba3",{
+/*Flamethrower (lanzallamas)*/
+    Q.Sprite.extend("Flamethrower",{
       init: function(p) {
-        this._super(p, { sheet: 'goomba2', vx: 0, vy: 0, gravity: 0, cont : 0, cont2 : 0 ,type: Q.ENEMY});
+        this._super(p, { sheet: 'miniboss', vx: 0, vy: 0, gravity: 0, cont : 0, cont2 : 0 ,type: Q.ENEMY});
         this.add('defaultEnemy');
         this.play('flyLeft');
 
@@ -656,9 +659,9 @@ window.addEventListener("load",function() {
     Q.Sprite.extend("Fire2", {  
        init: function(p) {
           this._super(p, {
-            vx: -50,
-            sprite: 'goomba2', 
-            sheet: 'goomba2',
+            vx: -70,
+            sprite: 'miniboss', 
+            sheet: 'miniboss',
             vy: 0,
             gravity: 0,
             rangeX: 100, 
@@ -691,13 +694,14 @@ window.addEventListener("load",function() {
     	    }));
 
     	    this.add("2d");
-    	    this.on("bump.top",this,"gotoStage2");
+    	    this.on("bump.top","gotoStage2");
     	    this.on("bump.left","gotoStage2");
     	    this.on("bump.right","gotoStage2");
     	    this.on("bump.bottom","gotoStage2");
       	},
       gotoStage2: function(col){
     	if(col.obj.isA("Batman")) {
+          this.destroy();
           col.obj.trigger('stage1completed');
         }
       },
@@ -717,6 +721,7 @@ window.addEventListener("load",function() {
         Bdies: function(col){
       if(col.obj.isA("Batman")) {
           col.obj.hit();
+          this.destroy();
         }
       },
        
@@ -924,12 +929,11 @@ window.addEventListener("load",function() {
       win: function(col){
 
       if(col.obj.isA("Batman")) {
-         this.gotoStage3();
+          this.destroy();
+          Q.stageScene("gotoStage3",1, { label: "GOOD JOB" });
         }
       },
-      gotoStage3: function(){
-          Q.stageScene("gotoStage3",1, { label: "GOOD JOB" });
-        },
+
       step: function(dt) {}});
 
      Q.Sprite.extend("buttEle",{
@@ -1000,44 +1004,6 @@ window.addEventListener("load",function() {
     });
 
 
-    /*Coins*/
-    Q.Sprite.extend("Collectable", {
-      init: function(p) {
-        this._super(p,{
-          sheet: 'coin',
-          type: Q.COIN,
-          collisionMask: Q.PLAYER,
-          vx: 0,
-          vy: 0,
-          gravity: 0,
-          picked: false,
-          sensor: true
-        });
-        this.add("animation");
-        this.add('tween');
-    	  this.play("shiny");
-        this.on("sensor");
-      },
-
-      sensor: function(colObj) {
-        if (this.p.amount && this.p.picked == false) {
-          colObj.p.score += this.p.amount;
-          Q.stageScene('hud', 3, colObj.p);
-        }
-        
-        this.p.picked = true;
-      },
-    
-      step: function(dt){
-        if(this.p.picked == true){
-          this.p.y = this.p.y-20;
-        }
-        if(this.p.y < 0) {
-          this.destroy();
-        }
-      }
-
-    });
 
     Q.scene('hud',function(stage) {
       var container = stage.insert(new Q.UI.Container({
@@ -1063,34 +1029,21 @@ window.addEventListener("load",function() {
         Q.stageScene('level1');
         Q.stageScene('hud', 3, Q('Batman').first().p);
       });
-
-      /*var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
-      button2.on("click",function() { 
-        Q.clearStages();
-        Q.stageScene('level2');
-        Q.stageScene('hud', 3, Q('Batman').first().p);
-      });*/
-
-      /*var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
-      background.on("click",function() {
-        Q.clearStages();
-        Q.stageScene('level3');
-        Q.stageScene('hud', 3, Q('Batman').first().p);
-      });*/
+      Q.audio.stop();
+      Q.audio.play("darkknight_theme.mp3");
     });
 
 
-   Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
-    "bloopa.json, bloopa.png, goomba2.json, goomba2.png, acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
+   Q.loadTMX("music_joker.mp3, darkknight_theme.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, tank.json, tank.png," +  
+    "batty.json, batty.png, miniboss.json, miniboss.png, acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
-    "coin.json, coin.png, Batman.png, Batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3, batmanCollectable.mp3",  function() {
+    "Batman.png, Batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3, batmanCollectable.mp3",  function() {
         Q.compileSheets("mario_small.png","mario_small.json");
-        Q.compileSheets("goomba.png","goomba.json");
-        Q.compileSheets("bloopa.png","bloopa.json");
-        Q.compileSheets("goomba2.png","goomba2.json");
+        Q.compileSheets("tank.png","tank.json");
+        Q.compileSheets("batty.png","batty.json");
+        Q.compileSheets("miniboss.png","miniboss.json");
         Q.compileSheets("tiles.png","tiles.json");
         Q.compileSheets("Batman.png", "Batman.json")
-        Q.compileSheets("coin.png","coin.json");
         Q.compileSheets("cintainferior.png","cintainferior.json");
         Q.compileSheets("cintaSup.png","cintaSup.json");
         Q.compileSheets("barraElect.png","barraElect.json");
@@ -1103,17 +1056,6 @@ window.addEventListener("load",function() {
         Q.sheet("Joker","joker.png");
         Q.compileSheets("joker.png","joker.json");
          Q.compileSheets("buttEle.png","buttEle.json");
-        /* no animations
-        Q.sheet("mario_small","mario_small.png", { tilew: 32, tileh: 32 });
-        Q.sheet("goomba","goomba.png", { tilew: 32, tileh: 32 });
-        Q.sheet("bloopa","bloopa.png", { tilew: 32, tileh: 32 });
-        Q.sheet("princess","princess.png", { tilew: 32, tileh: 32 });
-        */
-
-        Q.animations("coin", {
-          shiny: { frames: [0,1,2], rate: 1/5, flip: 'x', loop: true }
-          });
-
 
         var EnemyAnimations = {
             walkLeft: { frames: [0,1,2,3], rate: 1/8, loop: true },
@@ -1121,13 +1063,13 @@ window.addEventListener("load",function() {
             dead: { frames: [4,5,6,7], rate: 1/3 }
         };
 
-        Q.animations("goomba", EnemyAnimations);
-        Q.animations("bloopa", {
+        Q.animations("tank", EnemyAnimations);
+        Q.animations("batty", {
           jump: { frames: [0,1], rate: 1/2, loop: true },
           dead: { frames: [2], rate: 1/8 }
         });
 
-         Q.animations("goomba2", {
+         Q.animations("miniboss", {
           front: { frames: [0], rate: 1/8,},
           flyLeft: { frames: [1], rate: 1/8 },
           flyRight: { frames: [1], rate: 1/8, flip: "x"},
@@ -1147,14 +1089,8 @@ window.addEventListener("load",function() {
       stage.add("viewport").follow(Mario);
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
-      
-      //stage.insert(new Q.Goomba({ x: 300, y: 380 }));
-      //stage.insert(new Q.Bloopa({ x: 350, y: 525 }));
-      //stage.insert(new Q.Bloopa({ x: 370, y: 525 }));
-      //stage.insert(new Q.Bloopa({ x: 320, y: 525 }));
-  
-     // stage.insert(new Q.Princess({ x: 80, y: 500 }));
-    //stage.centerOn(150, 380);
+      Q.audio.stop();
+      Q.audio.play("darkknight_theme.mp3", {loop: true});
     });
 
       Q.scene("level2",function(stage) {
@@ -1163,7 +1099,25 @@ window.addEventListener("load",function() {
       stage.add("viewport");
       stage.viewport.offsetX = -Q.width*30/100;
       stage.viewport.offsetY = Q.height*33/100;
+
      
+    });
+
+      //Para cuando Batman muere
+    Q.scene('gotoMainMenu',function(stage) {
+      var box = stage.insert(new Q.UI.Container({
+        x: 30, y: 30, fill: "rgba(50,16,136,0.8)"
+      }));
+      
+      var button = box.insert(new Q.UI.Button({ x: 250, y: 260, fill: "#AD2A9D",
+                                               label: "Play Batman again" }))         
+      var label = box.insert(new Q.UI.Text({x:250, y: 250 - button.p.h, 
+                                            label: stage.options.label }));
+      button.on("click",function() {
+        Q.clearStages();
+        Q.stageScene('mainMenu');
+      });
+      box.fit(20);
     });
 
     Q.scene('gotoStage2',function(stage) {
@@ -1181,6 +1135,8 @@ window.addEventListener("load",function() {
       });
       box.fit(20);
     });
+    
+
      Q.scene('gotoStage3',function(stage) {
       var box = stage.insert(new Q.UI.Container({
         x: 30, y: 30, fill: "rgba(41,0,29,0.8)"
@@ -1572,7 +1528,8 @@ window.addEventListener("load",function() {
        stage.insert(new Q.JokerRunning());
        
        //musica del nivel de joker
-      Q.audio.play("music_joker.mp3", {loop: true});
+      Q.audio.stop();
+      Q.audio.play("music_joker.mp3", {loop: true});  
      });
      /*************fin del level3*********** */
 });
