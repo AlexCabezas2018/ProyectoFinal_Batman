@@ -1023,8 +1023,8 @@ window.addEventListener("load",function() {
           y: Q.height/2
       }));
       
-      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/20, fill: "#33088F", label: " PUSH ENTER " }))
-      Q.input.on("confirm",function() {
+      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/20, fill: "#33088F", label: " CLICK HERE TO START " }))
+      background.on("click",function() {
         Q.clearStages();
         Q.stageScene('level1');
         Q.stageScene('hud', 3, Q('Batman').first().p);
