@@ -1057,26 +1057,26 @@ window.addEventListener("load",function() {
           y: Q.height/2
       }));
       
-      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/7, fill: "#33088F", label: "1 ENTER", color: "#33088F" }))
+      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 - Q.height/20, fill: "#33088F", label: " PUSH ENTER " }))
       Q.input.on("confirm",function() {
         Q.clearStages();
         Q.stageScene('level1');
         Q.stageScene('hud', 3, Q('Batman').first().p);
       });
 
-      var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
+      /*var button2 = stage.insert(new Q.UI.Button({ x: 30, y: 30, fill: "#33088F", label: "Stage 2", color: "#33088F" }))
       button2.on("click",function() { 
         Q.clearStages();
         Q.stageScene('level2');
         Q.stageScene('hud', 3, Q('Batman').first().p);
-      });
+      });*/
 
-      var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
+      /*var button = stage.insert(new Q.UI.Button({ x: Q.width/2 + Q.width/6, y: Q.height/2 + Q.height/7, fill: "#33088F", label: "Stage 3", color: "#33088F" }))
       background.on("click",function() {
         Q.clearStages();
         Q.stageScene('level3');
         Q.stageScene('hud', 3, Q('Batman').first().p);
-      });
+      });*/
     });
 
 
