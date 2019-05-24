@@ -1083,7 +1083,7 @@ window.addEventListener("load",function() {
    Q.loadTMX("music_joker.mp3, level3.tmx, joker.png, joker.json,level1.tmx,level2.tmx, mario_small.json, mario_small.png, goomba.json, goomba.png," +  
     "bloopa.json, bloopa.png, goomba2.json, goomba2.png, acc1.png,acc1.json,cuchillas.png,buttEle.json,buttEle.png, cuchillas.json,cuchillas2.png,cuchillas2.json,cuchillas3.png,cuchillas3.json,cintaSup.png,cintaSup.json,ia.png,ia.json,ia2.png,ia.json,barraElect.png,barraElect.json," +  
     "cintainferior.png, cintainferior.json, princess.png, mainTitle.png, tiles.json, tiles.png," +  
-    "coin.json, coin.png, batman.png, batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3, batmanCollectable.mp3",  function() {
+    "coin.json, coin.png, Batman.png, Batman.json, batman_death.mp3, batman_hit.mp3, batman_punch.mp3, batman_jump.mp3, batmanCollectable.mp3",  function() {
         Q.compileSheets("mario_small.png","mario_small.json");
         Q.compileSheets("goomba.png","goomba.json");
         Q.compileSheets("bloopa.png","bloopa.json");
