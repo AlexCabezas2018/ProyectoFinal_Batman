@@ -1089,7 +1089,7 @@ window.addEventListener("load",function() {
         Q.compileSheets("bloopa.png","bloopa.json");
         Q.compileSheets("goomba2.png","goomba2.json");
         Q.compileSheets("tiles.png","tiles.json");
-        Q.compileSheets("batman.png", "batman.json")
+        Q.compileSheets("Batman.png", "Batman.json")
         Q.compileSheets("coin.png","coin.json");
         Q.compileSheets("cintainferior.png","cintainferior.json");
         Q.compileSheets("cintaSup.png","cintaSup.json");
